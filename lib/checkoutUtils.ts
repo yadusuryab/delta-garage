@@ -1,4 +1,4 @@
-import { createOrder, updateOrderPaymentId } from "@/lib/orderQueries"; // Import the new function
+import { createOrder, updateOrderPayment } from "@/lib/orderQueries"; // Import the new function
 import { CartItem } from "./orderUtils";
 
 interface CustomerDetails {
@@ -112,7 +112,7 @@ export const handleOnlinePayment = async (
       throw new Error("Failed to create payment session.");
 
     // Update the payment_id in the order with the payment_session_id
-    await updateOrderPaymentId(orderId, data.payment_session_id);
+    await updateOrderPayment(orderId, data.payment_session_id);
 
     // Load Cashfree script dynamically
     const script = document.createElement("script");
