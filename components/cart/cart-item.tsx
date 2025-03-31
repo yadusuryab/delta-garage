@@ -92,7 +92,7 @@ export default function CartItem({ item, onRemove }: any) {
         <div className="px-4 py-2 bg-muted/50 rounded-lg">
           <h4 className="text-sm font-medium mb-1">Key Features:</h4>
           <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
-            {item.features.slice(0, 3).map((feature, index) => (
+            {item.features.slice(0, 3).map((feature:any, index:any) => (
               <li key={index}>{feature}</li>
             ))}
           </ul>
