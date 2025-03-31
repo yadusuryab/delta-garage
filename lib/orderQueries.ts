@@ -3,6 +3,7 @@ import { client } from "@/sanityClient";
 interface ProductDetail {
   productId: {
     _ref: string;
+    _id:any;
     _type: "reference";
   };
   quantity: number;

@@ -73,7 +73,7 @@ const generateWhatsAppMessage = (order: Order) => {
 
 export default async function OrderDetailsPage({ params }: any) {
   const resolvedParams = await params;
-   const order = await getOrderById(resolvedParams.id);
+   const order : any = await getOrderById(resolvedParams.id);
 
   if (!order) {
     return (
@@ -90,7 +90,7 @@ export default async function OrderDetailsPage({ params }: any) {
         {order.productDetails.length === 0 ? (
           <p className="text-muted-foreground mt-4 text-sm font-semibold">Your cart is empty.</p>
         ) : (
-          order.productDetails.map((item) => (
+          order.productDetails.map((item:any) => (
             <CartItem
               key={item.productId._id}
               item={item.productId}

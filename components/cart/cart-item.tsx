@@ -19,7 +19,7 @@ interface CartItemProps {
   onRemove: () => void;
 }
 
-export default function CartItem({ item, onRemove }: CartItemProps) {
+export default function CartItem({ item, onRemove }: any) {
   
 
   return (
