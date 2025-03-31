@@ -57,15 +57,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ defaultValue = "", cat = false })
         {/* Sheet Content with Input */}
         <SheetContent className="flex flex-col p-4 !w-full">
           <SheetHeader className="text-left">
-            <SheetTitle>Search Trendy Shoes</SheetTitle>
+            <SheetTitle>Search Car Accessories</SheetTitle>
             <SheetDescription>
-              Enter your search below to find the best shoes.
+              Enter your search below to find the best for your car.
             </SheetDescription>
           </SheetHeader>
 
           <div className="flex items-center relative">
             <input
-              placeholder="Search for shoes..."
+              placeholder="Search for car accessories..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleKeyDown}

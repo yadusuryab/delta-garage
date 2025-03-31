@@ -43,16 +43,16 @@ import SearchBar from "../utils/search-box";
   
   return (
     <div className={`p-8 ${className}`}>
-   {!heading &&   <h2 className="mb-3 text-xl font-medium ">Find Your Watch</h2>}
-      <div className={`flex ${flex_col ? 'flex-col' : ''} overflow-scroll gap-3`}>
+   {!heading &&   <h2 className="mb-3 text-xl font-medium ">Best for your Car.</h2>}
+      <div className={`flex flex-col max-h-screen overflow-y-scroll gap-3`}>
         {displayedVehicles.map((cat: any) => (
-          <>
+          
             <Link href={`/products?category=${cat.slug.current}`}>
               <Button onClick={buttonOnclick} className={`h-20 rounded-none text-2xl font-semibold ${buttonClass}`}>
                 {cat.name}
               </Button>
             </Link>
-          </>
+        
         ))}
        {!heading && <SearchBar cat={true}/>}
       </div>
