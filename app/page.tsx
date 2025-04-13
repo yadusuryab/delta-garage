@@ -16,7 +16,7 @@ export default function Home() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 3000); // 5 seconds delay
+    }, 100); // 5 seconds delay
 
     return () => clearTimeout(timer); // Cleanup function
   }, []);
