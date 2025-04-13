@@ -88,13 +88,13 @@ export default function ProductCard2({
         <p className="text-lg">₹ {offerPrice || price} {offerPrice && <span className="line-through text-muted-foreground ">₹{price}</span>}</p>
 
         {/* Disable Add to Cart button if sold out */}
-        {!soldOut ? (
+        {/* {!soldOut ? (
           <AddToCartButton product={product} />
         ) : (
           <Button className="w-full rounded-sm" disabled>
             Sold Out
           </Button>
-        )}
+        )} */}
       </div>
     </div>
   );

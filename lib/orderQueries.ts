@@ -114,7 +114,51 @@ export const createOrder = async (orderData: {
   };
 
   try {
-    const createdOrder : any = await client.create(orderDoc);
+    const createdOrder: any = await client.create(orderDoc);
+
+    // Prepare data for WhatsApp messages
+    const totalAmount = orderData.payment.amount + orderData.shipping.charge;
+    const addressString = `${orderData.customer.address.street}, ${orderData.customer.address.district}, ${orderData.customer.address.state} - ${orderData.customer.address.pincode}`;
+    const productsString = orderData.products.map(p => 
+      `${p.name} (${p.quantity} x ₹${p.price})`
+    ).join(', ');
+
+    // Prepare the payload for the WhatsApp API
+    const whatsappPayload = {
+      to: `91${orderData.customer.phone}`,
+      orderId: createdOrder._id,
+      name: orderData.customer.name,
+      email: orderData.customer.email,
+      phone: orderData.customer.phone,
+      address: addressString,
+      products: productsString,
+      payment_method: orderData.payment.method,
+      payment_status: orderData.payment.status,
+      payment_amount: orderData.payment.amount,
+      shipping_charge: orderData.shipping.charge,
+      total_amount: totalAmount,
+      order_date: new Date().toISOString(),
+      notes: orderData.notes,
+    };
+
+    // Send WhatsApp messages
+    try {
+      const response = await fetch('/api/send-whatsapp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(whatsappPayload),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to send WhatsApp messages:', await response.text());
+      } else {
+        console.log('WhatsApp messages sent successfully');
+      }
+    } catch (whatsappError) {
+      console.error('Error sending WhatsApp messages:', whatsappError);
+    }
 
     // Clear cart if order creation succeeds
     localStorage.removeItem("cart");
