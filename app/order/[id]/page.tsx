@@ -82,6 +82,8 @@ export default async function OrderDetailsPage({ params }: any) {
       </div>
     );
   }
+  console.log(order.productDetails[0].productId.images);
+  
 
   return (
     <main className="container mx-auto md:px-16 px-2">

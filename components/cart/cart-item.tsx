@@ -31,7 +31,7 @@ export default function CartItem({ item, onRemove }: any) {
           {item.images && (
             <Link href={`/p/${item._id}`}>
               <Image
-                src={item.images[0]?.asset.url || "/placeholder.svg"}
+                src={item.images[0]?.asset.url  || item.images?.asset.url || "/placeholder.svg"}
                 alt={item.name}
                 fill
                 className="object-cover"

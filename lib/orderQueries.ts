@@ -116,48 +116,23 @@ export const createOrder = async (orderData: {
   try {
     const createdOrder: any = await client.create(orderDoc);
 
-    // Prepare data for WhatsApp messages
+    // Prepare data for notifications
     const totalAmount = orderData.payment.amount + orderData.shipping.charge;
     const addressString = `${orderData.customer.address.street}, ${orderData.customer.address.district}, ${orderData.customer.address.state} - ${orderData.customer.address.pincode}`;
-    const productsString = orderData.products.map(p => 
-      `${p.name} (${p.quantity} x ₹${p.price})`
-    ).join(', ');
+    
+    // WhatsApp notification
+   
 
-    // Prepare the payload for the WhatsApp API
-    const whatsappPayload = {
-      to: `91${orderData.customer.phone}`,
-      orderId: createdOrder._id,
-      name: orderData.customer.name,
-      email: orderData.customer.email,
-      phone: orderData.customer.phone,
-      address: addressString,
-      products: productsString,
-      payment_method: orderData.payment.method,
-      payment_status: orderData.payment.status,
-      payment_amount: orderData.payment.amount,
-      shipping_charge: orderData.shipping.charge,
-      total_amount: totalAmount,
-      order_date: new Date().toISOString(),
-      notes: orderData.notes,
-    };
-
-    // Send WhatsApp messages
+    // Telegram notification
     try {
-      const response = await fetch('/api/send-whatsapp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(whatsappPayload),
+      await sendTelegramNotification({
+        order: createdOrder,
+        orderData,
+        addressString,
+        totalAmount
       });
-
-      if (!response.ok) {
-        console.error('Failed to send WhatsApp messages:', await response.text());
-      } else {
-        console.log('WhatsApp messages sent successfully');
-      }
-    } catch (whatsappError) {
-      console.error('Error sending WhatsApp messages:', whatsappError);
+    } catch (telegramError) {
+      console.error('Error sending Telegram notification:', telegramError);
     }
 
     // Clear cart if order creation succeeds
@@ -170,6 +145,94 @@ export const createOrder = async (orderData: {
     return undefined;
   }
 };
+
+// Telegram notification function
+async function sendTelegramNotification(params: {
+  order: any;
+  orderData: {
+    customer: any;
+    products: any[];
+    payment: any;
+    shipping: any;
+    notes?: string;
+  };
+  addressString: string;
+  totalAmount: number;
+}) {
+  const { order, orderData, addressString, totalAmount } = params;
+  const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
+  const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID || !BASE_URL) {
+    console.warn("Required environment variables not set - skipping Telegram notification");
+    return;
+  }
+
+  try {
+    // Format product list with links
+    const productList = orderData.products
+      .map((product: any) => 
+        `- [${product.name}](${BASE_URL}/p/${product.productId}) (Qty: ${product.quantity}, Price: ₹${product.price})`
+      )
+      .join("\n");
+
+    const message = `
+📦 *New Order Received* 📦
+      
+🆔 *Order ID*: ${order._id}
+📅 *Date*: ${new Date(order._createdAt).toLocaleString()}
+      
+👤 *Customer Details*:
+- Name: ${orderData.customer.name}
+- Phone: [${orderData.customer.phone}](tel:${orderData.customer.phone})
+- Email: [${orderData.customer.email}](mailto:${orderData.customer.email})
+      
+📍 *Shipping Address*:
+${addressString}
+      
+🛒 *Products*:
+${productList}
+      
+💳 *Payment*:
+- Method: ${orderData.payment.method.toUpperCase()}
+- Status: ${orderData.payment.status}
+- Amount: ₹${orderData.payment.amount}
+- Shipping: ₹${orderData.shipping.charge}
+- *Total*: ₹${totalAmount}
+      
+🚚 *Shipping Status*: ${orderData.shipping.status.toUpperCase()}
+      
+📝 *Notes*: ${orderData.notes || "None"}
+    `;
+
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: 'Markdown',
+        disable_web_page_preview: false
+      }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      console.error('Telegram API error:', data);
+      throw new Error(`Telegram notification failed: ${data.description}`);
+    }
+
+    console.log('Telegram notification sent successfully');
+  } catch (error) {
+    console.error('Error sending Telegram notification:', error);
+    throw error; // Re-throw to be caught by the calling function
+  }
+}
 
 export const getOrderById = async (orderId: string): Promise<Order | undefined> => {
   const query = `*[_type == "order" && _id == $orderId][0]{
