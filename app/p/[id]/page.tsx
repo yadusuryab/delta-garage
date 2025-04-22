@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: any) {
   const product: any = await getShoeById(resolvedParams.id);
 
   if (!product) return notFound();
-
+  
   const {
     name,
     category,

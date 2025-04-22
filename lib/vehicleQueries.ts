@@ -1,6 +1,6 @@
 import { client } from "@/sanityClient";
 
-// Fetch all products (shoes)
+// Fetch all products
 export const getAllShoes = async (): Promise<any[] | undefined> => {
   const query = `*[_type == "product"] {
     _id,
@@ -9,19 +9,19 @@ export const getAllShoes = async (): Promise<any[] | undefined> => {
       name,
       slug
     },
-    material,
-    waterResistance,
-    movementType,
-    caseSize,
+    brand,
+    compatibility,
+    features,
     images[] {
       asset -> {
         url
       }
     },
+    quantity,
     price,
     offerPrice,
     description,
-    soldOut // Add soldOut field
+    soldOut
   }`;
 
   try {
@@ -33,7 +33,7 @@ export const getAllShoes = async (): Promise<any[] | undefined> => {
   }
 };
 
-// Fetch a single product (shoe) by ID
+// Fetch a single product by ID
 export const getShoeById = async (id: string): Promise<any | undefined> => {
   const query = `*[_type == "product" && _id == $id] {
     _id,
@@ -42,19 +42,19 @@ export const getShoeById = async (id: string): Promise<any | undefined> => {
       name,
       slug
     },
-    material,
-    waterResistance,
-    movementType,
-    caseSize,
+    brand,
+    compatibility,
+    features,
     images[] {
       asset -> {
         url
       }
     },
+    quantity,
     price,
     offerPrice,
     description,
-    soldOut // Add soldOut field
+    soldOut
   }`;
 
   try {
@@ -70,13 +70,13 @@ export const getShoeById = async (id: string): Promise<any | undefined> => {
   }
 };
 
-// Search for products (shoes) by keyword
+// Search for products by keyword
 export const searchShoes = async (keyword: string): Promise<any[] | undefined> => {
   const query = `*[_type == "product" && (
     name match $keyword || 
-    material match $keyword || 
-    waterResistance match $keyword || 
-    movementType match $keyword
+    brand match $keyword || 
+    compatibility match $keyword || 
+    description match $keyword
   )] {
     _id,
     name,
@@ -84,10 +84,9 @@ export const searchShoes = async (keyword: string): Promise<any[] | undefined> =
       name,
       slug
     },
-    material,
-    waterResistance,
-    movementType,
-    caseSize,
+    brand,
+    compatibility,
+    features,
     images[] {
       asset -> {
         url
@@ -96,7 +95,7 @@ export const searchShoes = async (keyword: string): Promise<any[] | undefined> =
     price,
     offerPrice,
     description,
-    soldOut // Add soldOut field
+    soldOut
   }`;
 
   try {
@@ -108,7 +107,7 @@ export const searchShoes = async (keyword: string): Promise<any[] | undefined> =
   }
 };
 
-// Add a product (shoe) to the cart
+// Add a product to the cart
 export const addToCart = (product: any) => {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -144,10 +143,9 @@ export const getProductsByCategory = async (categorySlug: string): Promise<any[]
       name,
       slug
     },
-    material,
-    waterResistance,
-    movementType,
-    caseSize,
+    brand,
+    compatibility,
+    features,
     images[] {
       asset -> {
         url
@@ -156,7 +154,7 @@ export const getProductsByCategory = async (categorySlug: string): Promise<any[]
     price,
     offerPrice,
     description,
-    soldOut // Add soldOut field
+    soldOut
   }`;
 
   try {
