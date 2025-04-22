@@ -84,7 +84,7 @@ export default function ProductCard2({
       {/* Product Details */}
       <div className="font-semibold mt-2 text-sm grid gap-0">
         <h2 className="font-bold mb-0">{name}</h2>
-        <p className="text-muted-foreground mt-0">{category.name}</p>
+        <p className="text-muted-foreground mt-0">{category?.name || 'Delta Garage'}</p>
         <p className="text-lg">₹ {offerPrice || price} {offerPrice && <span className="line-through text-muted-foreground ">₹{price}</span>}</p>
 
         {/* Disable Add to Cart button if sold out */}

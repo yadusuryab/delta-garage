@@ -35,7 +35,7 @@ function Transaction({
     handleCheckout(transactionId)
   }
 
-  const upiLink = `upi://pay?pa=yadusuryab@okhdfcbank&pn=Delta Garage&am=${totalAmount}&tn=OrderPayment`
+  const upiLink = `upi://pay?pa=rashidabous123@oksbi&pn=Delta Garage&am=${totalAmount}&tn=OrderPayment`
 
   return (
     <div className="space-y-6">
@@ -84,7 +84,7 @@ function Transaction({
                   Scan to Pay
                 </Badge>
                 <p className="text-sm text-muted-foreground">
-                  UPI ID: yadusuryab@okhdfcbank
+                  UPI ID: rashidabous123@oksbi
                 </p>
                 <p className="text-sm font-medium">
                   Amount: ₹{totalAmount.toLocaleString('en-IN')}
