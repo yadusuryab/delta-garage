@@ -76,7 +76,7 @@ export default function CheckoutPage() {
           productId: item._id,
           name: item.name,
           brand: item.brand,
-          quantity: item.quantity || 1, // Ensure quantity is included
+          quantity: 1, // Ensure quantity is included
           price: item.offerPrice || item.price,
           image: item.images?.[0]?.asset?.url
         })),
