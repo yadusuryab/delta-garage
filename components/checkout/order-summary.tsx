@@ -55,10 +55,10 @@ export const OrderSummary = ({
             </div>
             <div className="text-right">
               <p className="font-medium">
-                ₹{((item.offerPrice || item.price) * (item.quantity || 1)).toLocaleString('en-IN')}
+                ₹{((item.offerPrice || item.price) * (1)).toLocaleString('en-IN')}
               </p>
               <p className="text-sm text-muted-foreground">
-                {item.quantity || 1} × ₹{(item.offerPrice || item.price).toLocaleString('en-IN')}
+                {1} × ₹{(item.offerPrice || item.price).toLocaleString('en-IN')}
               </p>
             </div>
           </div>
