@@ -70,7 +70,7 @@ export default function ProductCard2({
       )}
 
       {/* Product Image Container */}
-      <div className={`relative aspect-square h-44  ${soldOut ? "grayscale" : ""}`}>
+      <div className={`relative aspect-square h-36  ${soldOut ? "grayscale" : ""}`}>
         <Image
           className="object-cover rounded-xl"
           src={images[0]?.asset.url || "/placeholder-image.jpg"}
