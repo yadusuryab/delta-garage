@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Button } from "../ui/button";
-import { getAllShoes } from "@/lib/vehicleQueries";
+import { getAllProducts } from "@/lib/productQueries";
 import Splash from "../utils/splash";
 import { toast } from "sonner";
 import ProductCard from "./product-card";
@@ -23,7 +23,7 @@ function ProductHomeGrid() {
     setLoading(true);
 
     try {
-      const data: any = await getAllShoes();
+      const data: any = await getAllProducts();
       if (!data || !Array.isArray(data)) throw new Error("Invalid product data");
 
       // Append new products to the existing list

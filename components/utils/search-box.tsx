@@ -13,6 +13,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet"; // Import necessary Shadcn components
 import CategoriesHomeList from "../categories/categories-home-list";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 interface SearchBarProps {
   defaultValue?: string;
@@ -47,9 +48,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ defaultValue = "", cat = false })
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <div className="w-full">
         <SheetTrigger asChild>
-         {!cat ? <Button variant="ghost" size={"icon"}>
-            <Search />
-          </Button> :  <Button  className={`h-20  rounded-2xl flex justify-between w-full   border text-xl font-semibold  `} variant={'outline'}>
+         {!cat ? 
+         <MagnifyingGlassIcon className="w-5 h-5 text-muted-foreground" />
+         :  <Button  className={`h-20  rounded-2xl flex justify-between w-full   border text-xl font-semibold  `} variant={'outline'}>
                 <span>All Categories</span> <span><BlocksIcon/></span>
               </Button>}
         </SheetTrigger>

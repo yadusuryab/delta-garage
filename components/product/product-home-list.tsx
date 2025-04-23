@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { getAllShoes } from "@/lib/vehicleQueries";
+import { getAllProducts } from "@/lib/productQueries";
 import Splash from "../utils/splash";
 import { toast } from "sonner";
 import ProductCard from "./product-card";
@@ -16,7 +16,7 @@ function ProductHomeList() {
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const data: any = await getAllShoes();
+        const data: any = await getAllProducts();
         if (!data || !Array.isArray(data)) throw new Error("Invalid product data");
         setVehicles(data);
       } catch (err) {

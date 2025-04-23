@@ -1,14 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-import CategoriesHomeList from "@/components/categories/categories-home-list";
 import CategoryGrid from "@/components/categories/category-grid";
 import ProductHomeGrid from "@/components/product/product-home-grid";
-import ProductHomeList from "@/components/product/product-home-list";
 import { Connect } from "@/components/sections/contact";
 import { Faq } from "@/components/sections/faq";
-import { FeaturesSection } from "@/components/sections/features";
 import { Hero } from "@/components/sections/hero";
 import Splash from "@/components/utils/splash";
+import { CategoryDisplay } from "@/components/categories/categories-display";
+import ProductHomeGrid2 from "@/components/product/product-home-layout-2";
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -27,18 +26,13 @@ export default function Home() {
         <Splash />
       ) : (
         <div>
-          <Hero />
-          <hr />
-          {/* <CategoriesHomeList/> */}
-          <CategoryGrid />
-          <hr/>
-          {/* <ProductHomeList/> */}
-          <ProductHomeGrid />
-          <Connect />
-          <Faq />
-          {/* <FeaturesSection />
-          <Faq />
-          <Connect /> */}
+          <CategoryDisplay />
+        
+          {/* <CategoryGrid /> */}
+         
+          <ProductHomeGrid2 />
+          {/* <Connect />
+          <Faq /> */}
         </div>
       )}
     </div>

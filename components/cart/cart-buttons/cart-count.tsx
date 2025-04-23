@@ -1,9 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ShoppingBagIcon,
+  MagnifyingGlassIcon,
+  TruckIcon,
+  XMarkIcon,
+  Bars3Icon
+} from "@heroicons/react/24/outline";
 
 const CartButton = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -42,19 +47,22 @@ const CartButton = () => {
   }, []);
 
   return (
-    <Link href="/my-cart">
-      <Button className="relative" size="icon" variant="ghost">
-        <ShoppingBag size={30} />
-        {/* {cartCount > 0 && (
-          <Badge
-            className="absolute -top-2 -right-2 rounded-full"
-            variant={"secondary"}
-          >
-            {cartCount}
-          </Badge>
-        )} */}
-      </Button>
-    </Link>
+    <Link href="/my-cart" className="p-2 relative">
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <ShoppingBagIcon className="w-5 h-5 text-muted-foreground" />
+                <motion.span 
+                  className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring" }}
+                >
+                  {cartCount}
+                </motion.span>
+              </motion.div>
+            </Link>
   );
 };
 

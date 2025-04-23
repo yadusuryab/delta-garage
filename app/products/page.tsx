@@ -5,11 +5,12 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { site } from "@/lib/site-config";
-import { getAllShoes, searchShoes, getProductsByCategory } from "@/lib/vehicleQueries";
+import { getAllProducts, searchProducts, getProductsByCategory } from "@/lib/productQueries";
 import Loading from "@/components/utils/loading";
 import SHeading from "@/components/utils/section-heading";
 import ProductCard from "@/components/product/product-card";
 import ProductCard2 from "@/components/product/product-image-card";
+import ProductCard3 from "@/components/product/product-image-card-2";
 
 function ProductList() {
   const [shoes, setShoes] = useState<any[]>([]);
@@ -29,7 +30,7 @@ function ProductList() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const shoesData: any = await getAllShoes();
+        const shoesData: any = await getAllProducts();
         setShoes(shoesData);
         setFilteredShoes(shoesData);
       } catch (err) {
@@ -59,7 +60,7 @@ function ProductList() {
   const handleSearch = async (keyword: string) => {
     setSearchLoading(true);
     try {
-      const searchResults: any = await searchShoes(keyword);
+      const searchResults: any = await searchProducts(keyword);
       setFilteredShoes(searchResults);
     } catch (err) {
       console.error("Error searching products:", err);
@@ -106,7 +107,7 @@ function ProductList() {
         ) : (
           <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 mt-6">
             {filteredShoes.map((shoe) => (
-              <ProductCard2 key={shoe._id} product={shoe} />
+              <ProductCard3 key={shoe._id} product={shoe} />
             ))}
           </div>
         )}

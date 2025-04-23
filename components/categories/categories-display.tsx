@@ -1,0 +1,200 @@
+"use client";
+
+import { getAllCategories } from "@/lib/productQueries";
+import { cn } from "@/lib/utils";
+import {
+  IconAdjustmentsBolt,
+  IconCloud,
+  IconCurrencyDollar,
+  IconEaseInOut,
+  IconHeart,
+  IconHelp,
+  IconRouteAltLeft,
+  IconTerminal2,
+  IconChevronDown,
+  IconChevronUp
+} from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+import Splash from "../utils/splash";
+import { toast } from "sonner";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+
+export function CategoryDisplay() {
+  const [categories, setCategories] = useState<any[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data: any = await getAllCategories();
+        if (!data || !Array.isArray(data))
+          throw new Error("Invalid product data");
+        setCategories(data);
+      } catch (err) {
+        setError("Failed to fetch categories.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (error) toast(error);
+  }, [error]);
+
+  if (loading) return <Splash />;
+
+  if (!categories || categories.length === 0) {
+    return <p className="font-bold text-sm p-4">Categories not found.</p>;
+  }
+
+  // Map categories to feature-like objects
+  const categoryFeatures = categories.slice(0, 8).map((category, index) => {
+    const icons = [
+      <IconTerminal2 key="term" />,
+      <IconEaseInOut key="ease" />,
+      <IconCurrencyDollar key="dollar" />,
+      <IconCloud key="cloud" />,
+      <IconRouteAltLeft key="route" />,
+      <IconHelp key="help" />,
+      <IconAdjustmentsBolt key="bolt" />,
+      <IconHeart key="heart" />,
+    ];
+
+    return {
+      title: category.name,
+      description:
+        category.description || `Explore our ${category.name} collection`,
+      icon: icons[index % icons.length],
+      slug: category.slug.current,
+    };
+  });
+
+  const visibleCategories = showAll ? categoryFeatures : categoryFeatures.slice(0, 3);
+
+  return (
+    <div className="relative z-10  max-w-7xl mx-auto px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:hidden">
+        {visibleCategories.map((feature, index) => (
+          <Link href={`/products?category=${feature.slug}`} key={feature.slug}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+            >
+              <Feature 
+                {...feature} 
+                index={index}
+                showBorder={index < (showAll ? categoryFeatures.length - 1 : 2)}
+              />
+            </motion.div>
+          </Link>
+        ))}
+
+        {/* Show All/Show Less button for mobile */}
+        <AnimatePresence>
+          {categoryFeatures.length > 3 && (
+            <motion.div
+              className="col-span-1 md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.button
+                onClick={() => setShowAll(!showAll)}
+                className={cn(
+                  "w-full flex items-center justify-center gap-2 py-4 px-10",
+                  "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100",
+                  "transition-colors duration-200"
+                )}
+                whileTap={{ scale: 0.95 }}
+              >
+                {showAll ? (
+                  <>
+                    <IconChevronUp className="w-5 h-5" />
+                    <span>Show Less</span>
+                  </>
+                ) : (
+                  <>
+                    <IconChevronDown className="w-5 h-5" />
+                    <span>Show All ({categoryFeatures.length})</span>
+                  </>
+                )}
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+       <div className=" grid-cols-1 md:grid-cols-2 lg:grid-cols-4 hidden md:grid">
+        {categoryFeatures.map((feature, index) => (
+          <Link href={`/products?category=${feature.slug}`} key={feature.slug}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+            >
+              <Feature 
+                {...feature} 
+                index={index}
+                showBorder={index < (showAll ? categoryFeatures.length - 1 : 2)}
+              />
+            </motion.div>
+          </Link>
+        ))}
+        </div>
+    </div>
+  );
+}
+
+// Updated Feature component with border control
+const Feature = ({
+  title,
+  description,
+  icon,
+  index,
+  showBorder = true
+}: {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  index: number;
+  showBorder?: boolean;
+}) => {
+  return (
+    <div
+      className={cn(
+        "flex flex-col border-b dark:border-neutral-800 py-10 relative group/feature",
+        "md:border-b-0", // Remove bottom border on desktop
+        index % 4 === 3 ? "md:border-r-0" : "md:border-r dark:border-neutral-800",
+        index < 4 && "md:border-b dark:border-neutral-800",
+        (index === 0 || index === 4) && "md:border-l dark:border-neutral-800",
+        !showBorder && "border-b-0" // Conditional bottom border
+      )}
+    >
+      {index < 4 && (
+        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-neutral-100 dark:from-neutral-800 to-transparent pointer-events-none" />
+      )}
+      {index >= 4 && (
+        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-b from-neutral-100 dark:from-neutral-800 to-transparent pointer-events-none" />
+      )}
+      <div className="mb-4 relative z-10 px-10 text-neutral-600 dark:text-neutral-400">
+        {icon}
+      </div>
+      <div className="text-lg font-bold mb-2 relative z-10 px-10">
+        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-neutral-300 dark:bg-neutral-700 group-hover/feature:bg-blue-500 transition-all duration-200 origin-center" />
+        <span className="group-hover/feature:translate-x-2 truncate transition duration-200 inline-block text-neutral-800 dark:text-neutral-100">
+          {title}
+        </span>
+      </div>
+      <p className="text-sm text-neutral-600 dark:text-neutral-300 max-w-xs relative z-10 px-10 truncate">
+        {description}
+      </p>
+    </div>
+  );
+};

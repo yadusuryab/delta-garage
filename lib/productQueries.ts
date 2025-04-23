@@ -1,7 +1,7 @@
 import { client } from "@/sanityClient";
 
 // Fetch all products
-export const getAllShoes = async (): Promise<any[] | undefined> => {
+export const getAllProducts = async (): Promise<any[] | undefined> => {
   const query = `*[_type == "product"] {
     _id,
     name,
@@ -34,7 +34,7 @@ export const getAllShoes = async (): Promise<any[] | undefined> => {
 };
 
 // Fetch a single product by ID
-export const getShoeById = async (id: string): Promise<any | undefined> => {
+export const getProductById = async (id: string): Promise<any | undefined> => {
   const query = `*[_type == "product" && _id == $id] {
     _id,
     name,
@@ -71,7 +71,7 @@ export const getShoeById = async (id: string): Promise<any | undefined> => {
 };
 
 // Search for products by keyword
-export const searchShoes = async (keyword: string): Promise<any[] | undefined> => {
+export const searchProducts = async (keyword: string): Promise<any[] | undefined> => {
   const query = `*[_type == "product" && (
     name match $keyword || 
     brand match $keyword || 

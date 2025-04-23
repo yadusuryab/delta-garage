@@ -5,7 +5,7 @@ import createGlobe from "cobe";
 export function FeaturesSection() {
   const features = [
     {
-      title: "Style & Comfort with Brandcorner",
+      title: "Style & Comfort with DeltaGarage",
       description:
         "Discover the perfect blend of style and comfort with our carefully curated footwear collection. Premium quality at unbeatable prices.",
       skeleton: "",
@@ -40,11 +40,11 @@ export function FeaturesSection() {
     <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
       <div className="px-8">
         <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
-          Style. Comfort. Brandcorner.
+          Style. Comfort. DeltaGarage.
         </h4>
 
         <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-secondary-500 text-center font-normal dark:text-secondary-300">
-          Brandcorner is a Kerala-based footwear store offering stylish and
+          DeltaGarage is a Kerala-based footwear store offering stylish and
           comfortable shoes at budget-friendly prices. We provide Cash on
           Delivery across India with a hassle-free shopping experience. Contact
           us for orders via DM or call 96560 60874.

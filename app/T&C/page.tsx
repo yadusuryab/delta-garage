@@ -117,7 +117,7 @@ const TermsAndConditions = () => {
       </p>
 
       <p className="mt-4 text-center font-semibold">
-        BEST REGARDS, Brandcorner TEAM
+        BEST REGARDS, DeltaGarage TEAM
       </p>
     </div>
   );

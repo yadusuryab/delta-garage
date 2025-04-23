@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { getAllCategories } from "@/lib/vehicleQueries";
+import { getAllCategories } from "@/lib/productQueries";
 import { toast } from "sonner";
 import Splash from "../utils/splash";
 import SearchBar from "../utils/search-box";

@@ -4,8 +4,8 @@ export default function CookiesPolicy() {
   return (
     <>
       <Head>
-        <title>Cookies Policy - Brandcorner</title>
-        <meta name="description" content="Learn how Brandcorner uses cookies to enhance your browsing experience." />
+        <title>Cookies Policy - DeltaGarage</title>
+        <meta name="description" content="Learn how DeltaGarage uses cookies to enhance your browsing experience." />
       </Head>
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-4">Cookies Policy</h1>
@@ -21,15 +21,15 @@ export default function CookiesPolicy() {
         <h3 className="text-xl font-semibold mt-4">Definitions</h3>
         <ul className="list-disc ml-6">
           <li>
-            <strong>Company:</strong> Refers to Brandcorner ("the Company", "We", "Us", or "Our").
+            <strong>Company:</strong> Refers to DeltaGarage ("the Company", "We", "Us", or "Our").
           </li>
           <li>
             <strong>Cookies:</strong> Small files placed on Your device, containing browsing history details among other
             uses.
           </li>
           <li>
-            <strong>Website:</strong> Refers to Brandcorner, accessible from
-            <a href="https://brandcorner.co.in" target="_blank" rel="noopener noreferrer" className="text-blue-500"> brandcorner.co.in</a>.
+            <strong>Website:</strong> Refers to DeltaGarage, accessible from
+            <a href="https://deltagarage.in" target="_blank" rel="noopener noreferrer" className="text-blue-500"> deltagarage.in</a>.
           </li>
           <li>
             <strong>You:</strong> The individual or legal entity accessing or using the Website.
@@ -71,12 +71,12 @@ export default function CookiesPolicy() {
         <p>
           If you have any questions about this Cookies Policy, contact us at:
           <a
-            href="https://brandcorner.co.in/contact"
+            href="https://deltagarage.in/contact"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-500"
           >
-            brandcorner.co.in/contact
+            deltagarage.in/contact
           </a>
           .
         </p>

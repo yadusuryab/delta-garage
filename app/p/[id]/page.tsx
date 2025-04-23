@@ -9,7 +9,7 @@ import ProductCarousel from "@/components/product/product-carousel";
 
 import SHeading from "@/components/utils/section-heading";
 import AddToCartButton from "@/components/cart/cart-buttons/add-to-cart";
-import { getShoeById } from "@/lib/vehicleQueries";
+import { getProductById } from "@/lib/productQueries";
 
 interface ProductProps {
   params: Promise<{ id: string }>;
@@ -19,7 +19,7 @@ export async function generateMetadata({
   params,
 }: ProductProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const product = await getShoeById(resolvedParams.id);
+  const product = await getProductById(resolvedParams.id);
 
   if (!product) {
     return {
@@ -45,7 +45,7 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: any) {
   const resolvedParams = await params;
-  const product: any = await getShoeById(resolvedParams.id);
+  const product: any = await getProductById(resolvedParams.id);
 
   if (!product) return notFound();
   
