@@ -16,7 +16,7 @@ interface CartItemProps {
     compatibility?: string;
     features?: string[];
   };
-  onRemove: () => void;
+  onRemove?: () => void;
 }
 
 export default function CartItem({ item, onRemove }: CartItemProps) {
