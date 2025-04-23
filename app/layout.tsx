@@ -182,7 +182,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header2 />
-          <div className="min-h-screen pt-20">{children}</div>
+          <div className="min-h-screen pt-20 pb-10">{children}</div>
           <Footer />
           <Toaster />
         </ThemeProvider>
