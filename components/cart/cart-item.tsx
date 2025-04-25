@@ -22,7 +22,7 @@ interface CartItemProps {
   onQuantityChange?: (newQuantity: number) => void;
 }
 
-export default function CartItem({ item, onRemove, onQuantityChange }: CartItemProps) {
+export default function CartItem({ item, onRemove, onQuantityChange }: any) {
   const imageUrl = Array.isArray(item.images) 
     ? item.images[0]?.asset.url 
     : item.images?.asset.url;
@@ -109,7 +109,7 @@ export default function CartItem({ item, onRemove, onQuantityChange }: CartItemP
                 >
                   <h4 className="text-sm font-medium mb-1">Key Features:</h4>
                   <ul className="text-xs text-muted-foreground space-y-1">
-                    {item.features.slice(0, 2).map((feature, index) => (
+                    {item.features.slice(0, 2).map((feature:any, index:any) => (
                       <motion.li 
                         key={index}
                         initial={{ x: -10, opacity: 0 }}

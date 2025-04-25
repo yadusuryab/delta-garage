@@ -64,7 +64,7 @@ export function CategoryDisplay() {
   // Map categories to feature-like objects
   const categoryFeatures = categories.slice(0, 8).map((category) => {
     // Create a mapping of category names to appropriate icons
-    const categoryIconMap = {
+    const categoryIconMap : any = {
       "Lights & Flashers": <IconBulb key="lights" />,
       "Fog lamps": <IconBrightnessUp key="fog" />,
       "Splitters, Skirtings & Diffusers": <IconCar key="bodykit" />,
