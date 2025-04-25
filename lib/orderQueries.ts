@@ -1,4 +1,5 @@
 import { client } from "@/sanityClient";
+import { getProductById } from "./productQueries";
 
 interface ProductDetail {
   productId: {
@@ -60,7 +61,7 @@ export const createOrder = async (orderData: {
     brand?: string;
     quantity: number;
     price: number;
-    image?: string;
+   
     size?: number;
   }>;
   payment: {
@@ -86,7 +87,7 @@ export const createOrder = async (orderData: {
     brand: product.brand,
     quantity: product.quantity,
     price: product.price,
-    image: product.image,
+  
     size: product.size,
     key: generateUniqueKey(),
   }));
@@ -116,12 +117,38 @@ export const createOrder = async (orderData: {
   try {
     const createdOrder: any = await client.create(orderDoc);
 
+    // Update product quantities
+    await Promise.all(
+      orderData.products.map(async (product) => {
+        try {
+          const existingProduct = await getProductById(product.productId);
+          if (!existingProduct) {
+            console.warn(`Product ${product.productId} not found`);
+            return;
+          }
+
+          const newQuantity = existingProduct.quantity - product.quantity;
+          const isSoldOut = newQuantity <= 0;
+
+          await client
+            .patch(existingProduct._id)
+            .set({
+              quantity: Math.max(0, newQuantity),
+              soldOut: isSoldOut
+            })
+            .commit();
+        } catch (error) {
+          console.error(`Error updating product ${product.productId}:`, error);
+        }
+      })
+    );
+
     // Prepare data for notifications
     const totalAmount = orderData.payment.amount + orderData.shipping.charge;
     const addressString = `${orderData.customer.address.street}, ${orderData.customer.address.district}, ${orderData.customer.address.state} - ${orderData.customer.address.pincode}`;
     
     // WhatsApp notification
-   
+    // ... (your existing WhatsApp notification code)
 
     // Telegram notification
     try {
@@ -230,7 +257,7 @@ ${productList}
     console.log('Telegram notification sent successfully');
   } catch (error) {
     console.error('Error sending Telegram notification:', error);
-    throw error; // Re-throw to be caught by the calling function
+    throw error;
   }
 }
 

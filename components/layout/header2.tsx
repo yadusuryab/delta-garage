@@ -57,11 +57,8 @@ const Header2 = () => {
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Left side - Cart (mobile) and nav items (desktop) */}
-          <div className="flex items-center">
-            {/* Mobile cart button (left side) */}
-            <CartButton/>
-            
+          {/* Left side - navigation items (desktop) */}
+          <div className="flex items-center flex-1">
             {/* Desktop navigation */}
             <nav className="hidden md:flex space-x-6">
               {navItems.map((item) => (
@@ -75,15 +72,11 @@ const Header2 = () => {
                 </Link>
               ))}
             </nav>
+            <CartButton className="md:hidden" />
           </div>
 
           {/* Center - Logo */}
-          <motion.div 
-            className="flex-1 flex justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="flex-shrink-0 mx-4"> {/* Changed to flex-shrink-0 to prevent flex-grow */}
             <Link href="/">
               <motion.div
                 whileHover={{ scale: 1.03 }}
@@ -93,10 +86,10 @@ const Header2 = () => {
                 <Brand className="h-8" />
               </motion.div>
             </Link>
-          </motion.div>
+          </div>
 
-          {/* Right side - Menu (mobile) and all icons (desktop) */}
-          <div className="flex items-center space-x-4">
+          {/* Right side - Icons */}
+          <div className="flex items-center justify-end flex-1"> {/* Changed to justify-end */}
             {!hideElements && (
               <>
                 {/* Mobile view - Menu button */}
@@ -113,31 +106,31 @@ const Header2 = () => {
                   )}
                 </motion.button>
 
-                {/* Desktop view - All icons */}
+                {/* Desktop view - Icons */}
                 <div className="hidden md:flex items-center space-x-4">
-                <motion.form
-                  onSubmit={handleSearch}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="flex items-center gap-2"
-                >
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search products..."
-                    className="flex-1 px-4 py-2 text-sm border rounded-full focus:outline-none focus:ring-1 focus:ring-black"
-                  />
-                  <motion.button
-                    type="submit"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="p-2 bg-black text-white rounded-full"
+                  <motion.form
+                    onSubmit={handleSearch}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="flex items-center gap-2"
                   >
-                    <MagnifyingGlassIcon className="w-4 h-4" />
-                  </motion.button>
-                </motion.form>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Search products..."
+                      className="flex-1 px-4 py-2 text-sm border rounded-full focus:outline-none focus:ring-1 focus:ring-black"
+                    />
+                    <motion.button
+                      type="submit"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-2 bg-black text-white rounded-full"
+                    >
+                      <MagnifyingGlassIcon className="w-4 h-4" />
+                    </motion.button>
+                  </motion.form>
 
                   <Link href="/track-order" className="p-2">
                     <motion.div
@@ -149,6 +142,7 @@ const Header2 = () => {
                     </motion.div>
                   </Link>
                   
+                  {/* Cart button moved here - only one instance */}
                   <CartButton/>
                 </div>
               </>

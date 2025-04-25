@@ -5,26 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
-interface AddToCartButtonProps {
-  product: {
-    _id: string;
-    name: string; // Updated from productName to name
-    category: {
-      name: string;
-      slug: string;
-    };
-    material: string;
-    waterResistance: string;
-    movementType: string;
-    caseSize: string;
-    images: { asset: { url: string } }[];
-    description: string;
-    price: number;
-    offerPrice?: number; // Optional offer price
-  };
-}
-
-export default function AddToCartButton({ product }: AddToCartButtonProps) {
+export default function AddToCartButton({ product }: any) {
   const [isInCart, setIsInCart] = useState(false);
 
   useEffect(() => {
@@ -37,7 +18,11 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
     if (!isInCart) {
-      const updatedCart = [...cart, product];
+      const productWithQuantity = {
+        ...product,
+        orderQuantity: 1
+      };
+      const updatedCart = [...cart, productWithQuantity];
       localStorage.setItem("cart", JSON.stringify(updatedCart));
       setIsInCart(true);
     }

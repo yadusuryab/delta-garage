@@ -93,10 +93,44 @@ export default async function OrderDetailsPage({ params }: any) {
           <p className="text-muted-foreground mt-4 text-sm font-semibold">Your cart is empty.</p>
         ) : (
           order.productDetails.map((item:any) => (
-            <CartItem
-              key={item.productId._id}
-              item={item.productId}
-            />
+            <div key={item.productId._id} className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-start gap-3">
+                {item.productId.images?.asset?.url && (
+                  <div className="relative w-12 h-12 rounded-md overflow-hidden border">
+                    <img
+                      src={item.productId?.images.asset.url}
+                      alt={item.productId.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                )}
+                <div>
+                  <h3 className="font-medium">{item.productId.name}</h3>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {item.productId.brand && (
+                      <Badge variant="outline" className="text-xs">
+                        {item.productId.brand}
+                      </Badge>
+                    )}
+                    {item.productId.category?.name && (
+                      <Badge variant="outline" className="text-xs">
+                        {item.productId.category.name}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="font-medium">
+                ₹{((item.productId.offerPrice || item.productId.price) * (1)).toLocaleString('en-IN')}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {item.productId.quantity} × ₹{(item.productId.offerPrice || item.productId.price).toLocaleString('en-IN')}
+              </p>
+            </div>
+          </div>
           ))
         )}
       </div>

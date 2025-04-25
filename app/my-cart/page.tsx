@@ -23,6 +23,7 @@ interface CartItem {
   offerPrice?: number;
   price: number;
   quantity: number;
+  orderQuantity: number;
   compatibility?: string;
   features?: string[];
 }
@@ -47,7 +48,7 @@ export default function CartPage() {
     if (newQuantity < 1) return;
 
     const updatedCart = cartItems.map((item) =>
-      item._id === id ? { ...item, quantity: newQuantity } : item
+      item._id === id ? { ...item, orderQuantity: newQuantity } : item
     );
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
@@ -56,7 +57,7 @@ export default function CartPage() {
 
   const calculateSubtotal = () =>
     cartItems.reduce(
-      (total, item) => total + (item.offerPrice || item.price),
+      (total, item) => total + (item.offerPrice || item.price) * item.orderQuantity,
       0
     );
 
@@ -81,12 +82,12 @@ export default function CartPage() {
               </Link>
             </div>
           ) : (
-            // In your CartPage component, keep this part the same:
-            cartItems.map((item: any) => (
+            cartItems.map((item) => (
               <CartItem
                 key={item._id}
                 item={item}
                 onRemove={() => removeFromCart(item._id)}
+                onQuantityChange={(newQuantity:any) => updateQuantity(item._id, newQuantity)}
               />
             ))
           )}
@@ -100,7 +101,7 @@ export default function CartPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span>Subtotal ({cartItems.length} items)</span>
+                  <span>Subtotal ({cartItems.reduce((total, item) => total + item.orderQuantity, 0)} items)</span>
                   <span>₹{calculateSubtotal().toLocaleString("en-IN")}</span>
                 </div>
                 <Separator />

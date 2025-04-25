@@ -12,7 +12,14 @@ import {
   IconRouteAltLeft,
   IconTerminal2,
   IconChevronDown,
-  IconChevronUp
+  IconChevronUp,
+  IconBulb,
+  IconCar,
+  IconBrightnessUp,
+  IconArmchair,
+  IconSpeakerphone,
+  IconBrandVolkswagen,
+  IconManualGearbox
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Splash from "../utils/splash";
@@ -55,27 +62,29 @@ export function CategoryDisplay() {
   }
 
   // Map categories to feature-like objects
-  const categoryFeatures = categories.slice(0, 8).map((category, index) => {
-    const icons = [
-      <IconTerminal2 key="term" />,
-      <IconEaseInOut key="ease" />,
-      <IconCurrencyDollar key="dollar" />,
-      <IconCloud key="cloud" />,
-      <IconRouteAltLeft key="route" />,
-      <IconHelp key="help" />,
-      <IconAdjustmentsBolt key="bolt" />,
-      <IconHeart key="heart" />,
-    ];
-
+  const categoryFeatures = categories.slice(0, 8).map((category) => {
+    // Create a mapping of category names to appropriate icons
+    const categoryIconMap = {
+      "Lights & Flashers": <IconBulb key="lights" />,
+      "Fog lamps": <IconBrightnessUp key="fog" />,
+      "Splitters, Skirtings & Diffusers": <IconCar key="bodykit" />,
+      "Spoilers": <IconCar key="spoiler" />,
+      "Car Interiors": <IconArmchair key="interior" />,
+      "Horns, Sirens & Air Intakes": <IconSpeakerphone key="horn" />,
+      "German Car Accessories": <IconBrandVolkswagen key="german" />,
+      "Gear Knobs, Hubs & Steerings": <IconManualGearbox key="steering" />
+    };
+  
+    // Fallback icon in case the category isn't matched
+    const fallbackIcon = <IconCar key="car" />;
+  
     return {
       title: category.name,
-      description:
-        category.description || `Explore our ${category.name} collection`,
-      icon: icons[index % icons.length],
+      description: category.description || `Explore our ${category.name} collection`,
+      icon: categoryIconMap[category.name] || fallbackIcon,
       slug: category.slug.current,
     };
   });
-
   const visibleCategories = showAll ? categoryFeatures : categoryFeatures.slice(0, 3);
 
   return (

@@ -13,6 +13,7 @@ export interface CartItem {
   compatibility?: string;
   features?: string[];
   selectedSize?: number;
+  orderQuantity : number;
   freeProduct?: {
     _id: string;
     name: string;
@@ -25,7 +26,7 @@ export interface CartItem {
 export const calculateSubtotal = (cartItems: CartItem[]): number => {
   return cartItems.reduce((total, item) => {
     const itemPrice = item.offerPrice || item.price;
-    const quantity = item.quantity || 1;
+    const quantity = item.orderQuantity;
     return total + (itemPrice * quantity);
   }, 0);
 };
@@ -100,5 +101,5 @@ export const validateForm = (
 
 // Additional utility function
 export const calculateCartQuantity = (cartItems: CartItem[]): number => {
-  return cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
+  return cartItems.reduce((total, item) => total + (item.orderQuantity), 0);
 };

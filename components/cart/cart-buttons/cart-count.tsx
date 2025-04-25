@@ -10,7 +10,7 @@ import {
   Bars3Icon
 } from "@heroicons/react/24/outline";
 
-const CartButton = () => {
+const CartButton = ({ className }: { className?: string })=> {
   const [cartCount, setCartCount] = useState(0);
 
   // Function to update the cart count
@@ -47,7 +47,7 @@ const CartButton = () => {
   }, []);
 
   return (
-    <Link href="/my-cart" className="p-2 relative">
+    <Link href="/my-cart"className={`p-2 relative ${className}`}>
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
