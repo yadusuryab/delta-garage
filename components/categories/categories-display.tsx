@@ -3,15 +3,7 @@
 import { getAllCategories } from "@/lib/productQueries";
 import { cn } from "@/lib/utils";
 import {
-  IconAdjustmentsBolt,
-  IconCloud,
-  IconCurrencyDollar,
-  IconEaseInOut,
-  IconHeart,
-  IconHelp,
-  IconRouteAltLeft,
-  IconTerminal2,
-  IconChevronDown,
+ IconChevronDown,
   IconChevronUp,
   IconBulb,
   IconCar,

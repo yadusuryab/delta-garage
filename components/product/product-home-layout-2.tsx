@@ -1,5 +1,4 @@
 'use client';
-import Link from "next/link";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Button } from "../ui/button";
 import { getAllProducts } from "@/lib/productQueries";
@@ -11,9 +10,6 @@ function ProductHomeGrid2() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const loaderRef = useRef<HTMLDivElement | null>(null);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -25,7 +21,6 @@ function ProductHomeGrid2() {
       }
 
       setProducts(data); // Set all products at once
-      setHasMore(false); // Since we're fetching all at once
     } catch (err) {
       setError("Failed to fetch products.");
       console.error(err);

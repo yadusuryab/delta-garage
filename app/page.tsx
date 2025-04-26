@@ -1,10 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import CategoryGrid from "@/components/categories/category-grid";
-import ProductHomeGrid from "@/components/product/product-home-grid";
-import { Connect } from "@/components/sections/contact";
-import { Faq } from "@/components/sections/faq";
-import { Hero } from "@/components/sections/hero";
 import Splash from "@/components/utils/splash";
 import { CategoryDisplay } from "@/components/categories/categories-display";
 import ProductHomeGrid2 from "@/components/product/product-home-layout-2";

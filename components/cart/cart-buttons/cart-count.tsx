@@ -1,13 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { 
   ShoppingBagIcon,
-  MagnifyingGlassIcon,
-  TruckIcon,
-  XMarkIcon,
-  Bars3Icon
 } from "@heroicons/react/24/outline";
 
 const CartButton = ({ className }: { className?: string })=> {

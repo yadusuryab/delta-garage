@@ -7,9 +7,6 @@ import Link from "next/link";
 import { site } from "@/lib/site-config";
 import { getAllProducts, searchProducts, getProductsByCategory } from "@/lib/productQueries";
 import Loading from "@/components/utils/loading";
-import SHeading from "@/components/utils/section-heading";
-import ProductCard from "@/components/product/product-card";
-import ProductCard2 from "@/components/product/product-image-card";
 import ProductCard3 from "@/components/product/product-image-card-2";
 
 function ProductList() {

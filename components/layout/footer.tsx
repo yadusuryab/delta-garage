@@ -1,12 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Facebook, Instagram, Linkedin, Send, Twitter } from "lucide-react";
 import { site } from "@/lib/site-config";
 import Link from "next/link";
-import { IconBrandInstagram, IconBrandWhatsapp } from "@tabler/icons-react";
 
 function Footer() {
   const [isChatOpen, setIsChatOpen] = React.useState<string>();

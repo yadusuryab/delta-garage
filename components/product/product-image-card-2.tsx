@@ -3,8 +3,6 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { isProductInCart } from "@/lib/cart";
-import { Button } from "../ui/button";
 
 export interface Product {
   _id: string;
@@ -40,15 +38,9 @@ export default function ProductCard3({
   onClick,
 }: ProductCardProps) {
   const { _id, name, category, images, price, offerPrice, soldOut } = product;
-  const [isInCart, setIsInCart] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
 
-  React.useEffect(() => {
-    setIsInCart(isProductInCart(_id));
-    const handleCartUpdate = () => setIsInCart(isProductInCart(_id));
-    window.addEventListener("cartUpdated", handleCartUpdate);
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
-  }, [_id]);
+
 
   const cardContent = (
     <motion.div

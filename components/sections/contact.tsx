@@ -7,14 +7,8 @@ import { cn } from "@/lib/utils";
 import { useAnimate } from "framer-motion";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-
-import {
-  HighlighterItem,
-  HighlightGroup,
-  Particles,
-} from "@/components/ui/highlighter";
 import { site } from "@/lib/site-config";
-import { IconBrandFacebook, IconBrandInstagram, IconBrandWhatsapp } from "@tabler/icons-react";
+import { IconBrandInstagram, IconBrandWhatsapp } from "@tabler/icons-react";
 import { Phone } from "lucide-react";
 import Brand from "../brand/brand";
 

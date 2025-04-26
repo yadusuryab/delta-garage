@@ -4,9 +4,10 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { site } from "@/lib/site-config";
 import { Toaster } from "@/components/ui/sonner";
-import Header from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import Header2 from "@/components/layout/header2";
+import OGimage from '@/public/og.png';
+import { getAllProducts } from "@/lib/productQueries";
 
 const inter = localFont({
   src: [
@@ -22,31 +23,33 @@ const inter = localFont({
     },
   ],
 });
+
 export const metadata: Metadata = {
-  title: `${site.name} | Buy Quality Products at Affordable Prices`,
-  description: "Welcome to DeltaGarage – Your one-stop shop for quality products at affordable prices. Explore our wide range of items and enjoy fast delivery and excellent customer service.",
+  title: `${site.name} | Buy Quality Car Accessories at Affordable Prices`,
+  description: "DeltaGarage – Kannur's trusted car accessories shop. Discover premium products like seat covers, lighting kits, infotainment systems, and more with fast nationwide delivery and unbeatable support.",
   keywords: [
     "DeltaGarage",
-    "e-commerce",
-    "buy online",
-    "affordable products",
-    "quality products",
-    "online shopping",
-    "best deals",
-    "fast delivery",
-    "customer service",
+    "Car Accessories",
+    "Kannur car accessories",
+    "Online car accessories India",
+    "Affordable car upgrades",
+    "Vehicle styling Kerala",
+    "Seat covers",
+    "Fog lamps",
+    "Infotainment system",
+    "Auto accessories store"
   ],
   openGraph: {
-    title: `${site.name} | Buy Quality Products at Affordable Prices`,
-    description: "Welcome to DeltaGarage – Your one-stop shop for quality products at affordable prices. Explore our wide range of items and enjoy fast delivery and excellent customer service.",
-    url: "https://deltagarage.in", // Replace with your actual website URL
+    title: `${site.name} | Buy Quality Car Accessories at Affordable Prices`,
+    description: "DeltaGarage – Kannur's trusted car accessories shop. Premium products with fast delivery and unmatched service.",
+    url: "https://deltagarage.in",
     siteName: site.name,
     images: [
       {
-        url: 'sdfs', // Replace with your actual OG image URL
+        url: OGimage.src,
         width: 1200,
         height: 630,
-        alt: "DeltaGarage - Quality Products at Affordable Prices",
+        alt: "DeltaGarage - Car Accessories",
       },
     ],
     locale: "en_US",
@@ -54,9 +57,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} | Buy Quality Products at Affordable Prices`,
-    description: "Welcome to DeltaGarage – Your one-stop shop for quality products at affordable prices. Explore our wide range of items and enjoy fast delivery and excellent customer service.",
-    images: ['OGImage.src'], // Replace with your actual Twitter card image URL
+    title: `${site.name} | Buy Car Accessories Online`,
+    description: "Shop high-quality car accessories from DeltaGarage with Cash on Delivery across India.",
+    images: [OGimage.src],
   },
   robots: {
     index: true,
@@ -72,115 +75,63 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://deltagarage.in", // Replace with your actual canonical URL
+    canonical: "https://deltagarage.in",
   },
   icons: {
-    icon: "/favicon.ico", // Replace with your actual favicon path
-    shortcut: "/shortcut-icon.png", // Replace with your actual shortcut icon path
-    apple: "/apple-touch-icon.png", // Replace with your actual Apple touch icon path
+    icon: "/favicon.ico",
+    shortcut: "/shortcut-icon.png",
+    apple: "/apple-touch-icon.png",
   },
-  manifest: "/site.webmanifest", // Replace with your actual manifest file path
+  manifest: "/site.webmanifest",
 };
 
+async function generateJsonLdProducts() {
+  const products = await getAllProducts();
+  if (!products) return null;
 
-// JSON-LD Structured Data for Products
-export const jsonLdProducts = {
-  "@context": "https://schema.org/",
-  "@type": "ItemList",
-  "itemListElement": [
-    {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: products.map((product, index) => ({
       "@type": "Product",
-      "position": 1,
-      "name": "Men's Watches",
-      "description": "Explore our collection of stylish and durable men's watches. Perfect for every occasion.",
-      "url": "https://deltagarage.in/mens-watches",
-      "image": "https://deltagarage.in/images/mens-watches.jpg",
-      "offers": {
+      position: index + 1,
+      name: product.name,
+      description: product.description,
+      url: `https://deltagarage.in/${product.category?.slug?.current}/${product._id}`,
+      image: product.images?.[0]?.asset?.url,
+      offers: {
         "@type": "Offer",
-        "priceCurrency": "INR",
-        "price": "1999",
-        "availability": "https://schema.org/InStock",
-        "seller": {
+        priceCurrency: "INR",
+        price: product.offerPrice || product.price,
+        availability: product.soldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+        seller: {
           "@type": "Organization",
-          "name": "DeltaGarage"
-        }
-      }
-    },
-    {
-      "@type": "Product",
-      "position": 2,
-      "name": "Ladies' Watches",
-      "description": "Discover elegant and trendy ladies' watches to complement your style.",
-      "url": "https://deltagarage.in/ladies-watches",
-      "image": "https://deltagarage.in/images/ladies-watches.jpg",
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "INR",
-        "price": "1799",
-        "availability": "https://schema.org/InStock",
-        "seller": {
-          "@type": "Organization",
-          "name": "DeltaGarage"
-        }
-      }
-    },
-    {
-      "@type": "Product",
-      "position": 3,
-      "name": "Sunglasses",
-      "description": "Shop the latest collection of sunglasses for men and women. UV protection and stylish designs.",
-      "url": "https://deltagarage.in/sunglasses",
-      "image": "https://deltagarage.in/images/sunglasses.jpg",
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "INR",
-        "price": "999",
-        "availability": "https://schema.org/InStock",
-        "seller": {
-          "@type": "Organization",
-          "name": "DeltaGarage"
-        }
-      }
-    },
-    {
-      "@type": "Product",
-      "position": 4,
-      "name": "Gadgets",
-      "description": "Find the latest gadgets, including smartwatches, earphones, and more.",
-      "url": "https://deltagarage.in/gadgets",
-      "image": "https://deltagarage.in/images/gadgets.jpg",
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "INR",
-        "price": "4999",
-        "availability": "https://schema.org/InStock",
-        "seller": {
-          "@type": "Organization",
-          "name": "DeltaGarage"
-        }
-      }
-    }
-  ]
-};
-export default function RootLayout({
+          name: "DeltaGarage",
+        },
+      },
+    })),
+  };
+}
+
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const jsonLdProducts = await generateJsonLdProducts();
+
   return (
     <html lang="en" suppressHydrationWarning>
-<head>
-        <script type="application/ld+json">
-          {JSON.stringify(jsonLdProducts)}
-        </script>
+      <head>
+        {jsonLdProducts && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdProducts) }}
+          />
+        )}
       </head>
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          
-          defaultTheme="dark"
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <Header2 />
           <div className="min-h-screen pt-20 pb-10">{children}</div>
           <Footer />
