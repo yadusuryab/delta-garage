@@ -5,31 +5,31 @@ import createGlobe from "cobe";
 export function FeaturesSection() {
   const features = [
     {
-      title: "Style & Comfort with DeltaGarage",
+      title: "Quality Car Accessories by DeltaGarage",
       description:
-        "Discover the perfect blend of style and comfort with our carefully curated footwear collection. Premium quality at unbeatable prices.",
+        "Enhance your driving experience with high-quality car accessories designed for comfort, safety, and style. Trusted by auto enthusiasts across Kerala.",
       skeleton: "",
       className:
         "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-secondary-800",
     },
     {
-      title: "A Proudly Malayali Brand",
+      title: "Proudly Made in Kannur, Kerala",
       description:
-        "Based in Kerala, we bring you trendy footwear designed for every occasion and budget.",
+        "Rooted in Kannur, we deliver innovative automotive accessories crafted to meet the needs of every vehicle owner in India.",
       skeleton: "",
       className: "border-b col-span-1 lg:col-span-2 dark:border-secondary-800",
     },
     {
-      title: "Affordable & Stylish Footwear",
+      title: "Stylish, Functional & Affordable",
       description:
-        "Quality footwear at budget-friendly prices. Place your order via DM 📩 or call ☎️ 96560 60874.",
+        "From interior upgrades to exterior enhancements — shop top-quality accessories at competitive prices. DM 📩 or call ☎️ 96560 60874 to order.",
       skeleton: "",
       className: "col-span-1 lg:col-span-3 border-b lg:border-r",
     },
     {
-      title: "Nationwide Cash on Delivery",
+      title: "Pan-India Cash on Delivery",
       description:
-        "Order from anywhere in India with our secure and hassle-free Cash on Delivery service.",
+        "Wherever you are in India, enjoy a smooth shopping experience with our reliable Cash on Delivery service.",
       skeleton: <SkeletonFour />,
       className:
         "col-span-1 lg:col-span-3 lg:border-none dark:border-secondary-800",
@@ -40,14 +40,15 @@ export function FeaturesSection() {
     <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
       <div className="px-8">
         <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
-          Style. Comfort. DeltaGarage.
+          Drive Smart. Ride Stylish. DeltaGarage.
         </h4>
 
         <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-secondary-500 text-center font-normal dark:text-secondary-300">
-          DeltaGarage is a Kerala-based footwear store offering stylish and
-          comfortable shoes at budget-friendly prices. We provide Cash on
-          Delivery across India with a hassle-free shopping experience. Contact
-          us for orders via DM or call 96560 60874.
+          DeltaGarage is a Kannur-based car accessories brand, offering premium
+          quality products designed to elevate your vehicle’s look and
+          functionality. We provide secure Cash on Delivery across India for a
+          smooth, hassle-free shopping experience. Order now via DM or call
+          96560 60874.
         </p>
       </div>
 
