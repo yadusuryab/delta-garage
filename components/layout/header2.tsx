@@ -3,12 +3,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
+import {
   ShoppingBagIcon,
   MagnifyingGlassIcon,
   TruckIcon,
   XMarkIcon,
-  Bars3Icon
+  Bars3Icon,
 } from "@heroicons/react/24/outline";
 import Brand from "../brand/brand";
 import CartButton from "../cart/cart-buttons/cart-count";
@@ -23,16 +23,14 @@ const Header2 = () => {
   // Navigation items
   const navItems = [
     { name: "Products", href: "/products" },
-    { name: "Categories", href: "/categories" },
+    { name: "Categories", href: "/" },
     { name: "About", href: "/about" },
   ];
 
   // Hide elements on specific pages
-  const hideElements = [
-    "/checkout",
-    "/order",
-    "/my-cart",
-  ].some(path => pathname.startsWith(path));
+  const hideElements = ["/checkout", "/order", "/my-cart"].some((path) =>
+    pathname.startsWith(path)
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,9 +50,13 @@ const Header2 = () => {
   };
 
   return (
-    <header className={`fixed border-b top-0 w-full z-50 transition-all duration-300 ${
-      isScrolled ? "bg-background/90 backdrop-blur-md shadow-sm" : "bg-background"
-    }`}>
+    <header
+      className={`fixed border-b top-0 w-full z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-background/90 backdrop-blur-md shadow-sm"
+          : "bg-background"
+      }`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Left side - navigation items (desktop) */}
@@ -76,7 +78,9 @@ const Header2 = () => {
           </div>
 
           {/* Center - Logo */}
-          <div className="flex-shrink-0 mx-4"> {/* Changed to flex-shrink-0 to prevent flex-grow */}
+          <div className="flex-shrink-0 mx-4">
+            {" "}
+            {/* Changed to flex-shrink-0 to prevent flex-grow */}
             <Link href="/">
               <motion.div
                 whileHover={{ scale: 1.03 }}
@@ -89,11 +93,13 @@ const Header2 = () => {
           </div>
 
           {/* Right side - Icons */}
-          <div className="flex items-center justify-end flex-1"> {/* Changed to justify-end */}
+          <div className="flex items-center justify-end flex-1">
+            {" "}
+            {/* Changed to justify-end */}
             {!hideElements && (
               <>
                 {/* Mobile view - Menu button */}
-                <motion.button 
+                <motion.button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   className="p-2 md:hidden"
                   aria-label="Menu"
@@ -141,9 +147,9 @@ const Header2 = () => {
                       <span className="text-xs">Track</span>
                     </motion.div>
                   </Link>
-                  
+
                   {/* Cart button moved here - only one instance */}
-                  <CartButton/>
+                  <CartButton />
                 </div>
               </>
             )}
@@ -216,7 +222,9 @@ const Header2 = () => {
                       <Link href={item.href} className="block">
                         <motion.div
                           whileHover={{ x: 5 }}
-                          className="px-2 py-3 text-sm font-medium border-b"
+                          className={`px-2 py-3 text-sm font-medium ${
+                            index !== navItems.length - 1 ? "border-b" : ""
+                          }`}
                           onClick={() => setIsMenuOpen(false)}
                         >
                           {item.name}
