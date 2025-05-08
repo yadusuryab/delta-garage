@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Splash from "@/components/utils/splash";
 import { CategoryDisplay } from "@/components/categories/categories-display";
 import ProductHomeGrid2 from "@/components/product/product-home-layout-2";
+import Hero from "@/components/sections/hero";
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -21,6 +22,7 @@ export default function Home() {
         <Splash />
       ) : (
         <div>
+          <Hero/>
           <CategoryDisplay />
         
           {/* <CategoryGrid /> */}

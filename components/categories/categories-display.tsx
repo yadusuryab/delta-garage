@@ -54,7 +54,7 @@ export function CategoryDisplay() {
   }
 
   // Map categories to feature-like objects
-  const categoryFeatures = categories.slice(0, 8).map((category) => {
+  const categoryFeatures = categories.map((category) => {
     // Create a mapping of category names to appropriate icons
     const categoryIconMap : any = {
       "Lights & Flashers": <IconBulb key="lights" />,
@@ -77,7 +77,7 @@ export function CategoryDisplay() {
       slug: category.slug.current,
     };
   });
-  const visibleCategories = showAll ? categoryFeatures : categoryFeatures.slice(0, 3);
+  const visibleCategories = showAll ? categoryFeatures : categoryFeatures.slice(0, 1);
 
   return (
     <div className="relative z-10  max-w-7xl mx-auto px-4">
