@@ -3,7 +3,7 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import Slide1 from '@/public/slide1.jpg';
-import Slide2 from '@/public/slide2.jpg';
+import Slide2 from '@/public/nc.png';
 import Slide3 from '@/public/slide3.jpg';
 import 'swiper/css';
 import 'swiper/css/pagination';
