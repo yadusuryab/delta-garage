@@ -71,9 +71,9 @@ export function CategoryDisplay() {
     const fallbackIcon = <IconCar key="car" />;
   
     return {
-      title: category.name,
-      description: category.description || `Explore our ${category.name} collection`,
-      icon: categoryIconMap[category.name] || fallbackIcon,
+      title: category?.name || 'deltagarage',
+      description: category.description || `Explore our ${category?.name || 'deltagarage'} collection`,
+      icon: categoryIconMap[category?.name || 'dg'] || fallbackIcon,
       slug: category.slug.current,
     };
   });

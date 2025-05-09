@@ -46,7 +46,7 @@ export const OrderSummary = ({
                     )}
                     {item.category?.name && (
                       <Badge variant="outline" className="text-xs">
-                        {item.category.name}
+                        {item.category?.name || 'deltagarage'}
                       </Badge>
                     )}
                   </div>

@@ -114,7 +114,7 @@ export default async function OrderDetailsPage({ params }: any) {
                     )}
                     {item.productId.category?.name && (
                       <Badge variant="outline" className="text-xs">
-                        {item.productId.category.name}
+                        {item.productId.category?.name || 'deltagarage'}
                       </Badge>
                     )}
                   </div>

@@ -114,7 +114,7 @@ export default function ProductCard3({
           animate={{ scale: isHovered ? 1 : 0 }}
           transition={{ delay: 0.1 }}
         >
-          {category.name}
+          {category?.name || 'deltagarage'}
         </motion.span>
       </motion.div>
 
