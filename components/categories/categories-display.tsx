@@ -79,7 +79,7 @@ export function CategoryDisplay() {
   const visibleCategories = showAll ? categoryFeatures : categoryFeatures.slice(0, 1);
 
   return (
-    <div className="relative z-10 max-w-7xl mx-auto px-4">
+    <div className="relative z-10 max-w-7xl mx-auto px-4 mt-5">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:hidden">
         {visibleCategories.map((feature, index) => (
           <Link href={`/products?category=${feature.slug}`} key={feature.slug}>
