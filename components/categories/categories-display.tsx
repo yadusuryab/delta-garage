@@ -53,7 +53,7 @@ export function CategoryDisplay() {
   if (!categories || categories.length === 0) {
     return <p className="font-bold text-sm p-4">Categories not found.</p>;
   }
-
+  console.log(categories)
   const categoryFeatures = categories.map((category) => {
     const categoryIconMap: any = {
       "Lights & Flashers": <IconBulb key="lights" />,
@@ -73,7 +73,7 @@ export function CategoryDisplay() {
       description: category.description || `Explore our ${category?.name || 'deltagarage'} collection`,
       icon: categoryIconMap[category?.name || 'dg'] || fallbackIcon,
       slug: category.slug.current,
-      imageUrl: category.image?.asset?.url || null,
+      imageUrl: category.images?.asset?.url || null,
     };
   });
 

@@ -122,7 +122,16 @@ export const getAllCategories = async (): Promise<any[] | undefined> => {
   const query = `*[_type == "category"] {
     _id,
     name,
-    slug
+    slug,
+    image {
+      asset->{
+        url,
+        metadata {
+          dimensions
+        }
+      },
+      alt
+    }
   }`;
 
   try {
