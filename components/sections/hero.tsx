@@ -11,7 +11,7 @@ import 'swiper/css/navigation';
 
 function Hero() {
   return (
-    <div className="w-full h-[400px] relative">
+    <div className="w-full h-[400px] md:h-[500px] relative">
       <Swiper
         modules={[Pagination, Navigation]}
         pagination={{ clickable: false }}
@@ -24,7 +24,7 @@ function Hero() {
           <img
             src={Slide2.src || ''}
             alt="Slide 1"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover"
           />
         </SwiperSlide>
         
