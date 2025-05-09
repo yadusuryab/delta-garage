@@ -24,7 +24,7 @@ function Hero() {
           <img
             src={Slide2.src || ''}
             alt="Slide 1"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         </SwiperSlide>
         
