@@ -11,7 +11,7 @@ import 'swiper/css/navigation';
 
 function Hero() {
   return (
-    <div className="w-full h-[400px] md:h-[600px] relative">
+    <div className="w-full h-[400px] relative">
       <Swiper
         modules={[Pagination, Navigation]}
         pagination={{ clickable: false }}
@@ -27,20 +27,7 @@ function Hero() {
             className="w-full h-full object-cover"
           />
         </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src={Slide1.src || ''}
-            alt="Slide 2"
-            className="w-full h-full object-cover"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-           src={Slide3.src || ''}
-            alt="Slide 3"
-            className="w-full h-full object-cover"
-          />
-        </SwiperSlide>
+        
       </Swiper>
     </div>
   );
