@@ -3,7 +3,7 @@
 import { getAllCategories } from "@/lib/productQueries";
 import { cn } from "@/lib/utils";
 import {
- IconChevronDown,
+  IconChevronDown,
   IconChevronUp,
   IconBulb,
   IconCar,
@@ -18,6 +18,7 @@ import Splash from "../utils/splash";
 import { toast } from "sonner";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export function CategoryDisplay() {
   const [categories, setCategories] = useState<any[] | null>(null);
@@ -53,10 +54,8 @@ export function CategoryDisplay() {
     return <p className="font-bold text-sm p-4">Categories not found.</p>;
   }
 
-  // Map categories to feature-like objects
   const categoryFeatures = categories.map((category) => {
-    // Create a mapping of category names to appropriate icons
-    const categoryIconMap : any = {
+    const categoryIconMap: any = {
       "Lights & Flashers": <IconBulb key="lights" />,
       "Fog lamps": <IconBrightnessUp key="fog" />,
       "Splitters, Skirtings & Diffusers": <IconCar key="bodykit" />,
@@ -67,7 +66,6 @@ export function CategoryDisplay() {
       "Gear Knobs, Hubs & Steerings": <IconManualGearbox key="steering" />
     };
   
-    // Fallback icon in case the category isn't matched
     const fallbackIcon = <IconCar key="car" />;
   
     return {
@@ -75,12 +73,14 @@ export function CategoryDisplay() {
       description: category.description || `Explore our ${category?.name || 'deltagarage'} collection`,
       icon: categoryIconMap[category?.name || 'dg'] || fallbackIcon,
       slug: category.slug.current,
+      imageUrl: category.image?.asset?.url || null,
     };
   });
+
   const visibleCategories = showAll ? categoryFeatures : categoryFeatures.slice(0, 1);
 
   return (
-    <div className="relative z-10  max-w-7xl mx-auto px-4">
+    <div className="relative z-10 max-w-7xl mx-auto px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:hidden">
         {visibleCategories.map((feature, index) => (
           <Link href={`/products?category=${feature.slug}`} key={feature.slug}>
@@ -98,7 +98,6 @@ export function CategoryDisplay() {
           </Link>
         ))}
 
-        {/* Show All/Show Less button for mobile */}
         <AnimatePresence>
           {categoryFeatures.length > 3 && (
             <motion.div
@@ -132,7 +131,7 @@ export function CategoryDisplay() {
           )}
         </AnimatePresence>
       </div>
-       <div className=" grid-cols-1 md:grid-cols-2 lg:grid-cols-4 hidden md:grid">
+      <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-4 hidden md:grid">
         {categoryFeatures.map((feature, index) => (
           <Link href={`/products?category=${feature.slug}`} key={feature.slug}>
             <motion.div
@@ -148,54 +147,75 @@ export function CategoryDisplay() {
             </motion.div>
           </Link>
         ))}
-        </div>
+      </div>
     </div>
   );
 }
 
-// Updated Feature component with border control
 const Feature = ({
   title,
   description,
   icon,
   index,
-  showBorder = true
+  showBorder = true,
+  imageUrl
 }: {
   title: string;
   description: string;
   icon: React.ReactNode;
   index: number;
   showBorder?: boolean;
+  imageUrl?: string | null;
 }) => {
   return (
     <div
       className={cn(
-        "flex flex-col border-b dark:border-neutral-800 py-10 relative group/feature",
-        "md:border-b-0", // Remove bottom border on desktop
+        "flex flex-col border-b dark:border-neutral-800 py-10 relative group/feature overflow-hidden",
+        "md:border-b-0",
         index % 4 === 3 ? "md:border-r-0" : "md:border-r dark:border-neutral-800",
         index < 4 && "md:border-b dark:border-neutral-800",
         (index === 0 || index === 4) && "md:border-l dark:border-neutral-800",
-        !showBorder && "border-b-0" // Conditional bottom border
+        !showBorder && "border-b-0",
+        "h-full min-h-[250px]"
       )}
     >
-      {index < 4 && (
-        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-neutral-100 dark:from-neutral-800 to-transparent pointer-events-none" />
+      {/* Background Image with overlay */}
+      {imageUrl && (
+        <>
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              className="object-cover transition-transform duration-300 group-hover/feature:scale-105"
+              quality={80}
+            />
+          </div>
+          <div className="absolute inset-0 z-0 bg-black/40 group-hover/feature:bg-black/50 transition-colors duration-300" />
+        </>
       )}
-      {index >= 4 && (
-        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-b from-neutral-100 dark:from-neutral-800 to-transparent pointer-events-none" />
-      )}
-      <div className="mb-4 relative z-10 px-10 text-neutral-600 dark:text-neutral-400">
+
+      {/* Content */}
+      <div className="mb-4 relative z-10 px-10 text-white">
         {icon}
       </div>
       <div className="text-lg font-bold mb-2 relative z-10 px-10">
-        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-neutral-300 dark:bg-neutral-700 group-hover/feature:bg-blue-500 transition-all duration-200 origin-center" />
-        <span className="group-hover/feature:translate-x-2 truncate transition duration-200 inline-block text-neutral-800 dark:text-neutral-100">
+        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-white/70 group-hover/feature:bg-blue-500 transition-all duration-200 origin-center" />
+        <span className="group-hover/feature:translate-x-2 truncate transition duration-200 inline-block text-white">
           {title}
         </span>
       </div>
-      <p className="text-sm text-neutral-600 dark:text-neutral-300 max-w-xs relative z-10 px-10 truncate">
+      <p className="text-sm text-white/80 max-w-xs relative z-10 px-10 truncate">
         {description}
       </p>
+
+      {/* Hover effects */}
+      {index < 4 && (
+        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-0" />
+      )}
+      {index >= 4 && (
+        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-b from-black/30 to-transparent pointer-events-none z-0" />
+      )}
     </div>
   );
 };
