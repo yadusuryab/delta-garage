@@ -11,12 +11,12 @@ export interface Product {
     name: string;
     slug: string;
   };
-  material: string;
-  waterResistance: string;
-  movementType: string;
-  caseSize: string;
+  material?: string;
+  waterResistance?: string;
+  movementType?: string;
+  caseSize?: string;
   images: { asset: { url: string } }[];
-  description: string;
+  description?: string;
   price: number;
   offerPrice?: number;
   soldOut: boolean;
@@ -38,20 +38,14 @@ export default function ProductCard3({
   onClick,
 }: ProductCardProps) {
   const { _id, name, category, images, price, offerPrice, soldOut } = product;
-  const [isHovered, setIsHovered] = React.useState(false);
 
-
+  // Sanity image optimization query params
+  const baseImageUrl = images[0]?.asset.url || "/placeholder-image.jpg";
+  const optimizedImageUrl = `${baseImageUrl}?w=400&h=533&fit=crop&auto=format`;
 
   const cardContent = (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{ scale: 1.02 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      onClick={noLink ? onClick : undefined}
-      className={`${className} relative w-full overflow-hidden rounded-lg shadow-sm group`}
+      className={`${className} relative w-full overflow-hidden rounded-lg shadow-sm group cursor-pointer`}
       style={{ aspectRatio: "3/4" }}
     >
       {/* Sold Out Overlay */}
@@ -64,66 +58,47 @@ export default function ProductCard3({
       )}
 
       {/* Product Image with Zoom Effect */}
-      <motion.div
-        animate={{
-          scale: isHovered ? 1.1 : 1.05, // Increased zoom on hover
-        }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className={`absolute inset-0 ${soldOut ? "grayscale" : ""}`}
-      >
-        <Image
-          src={images[0]?.asset.url || "/placeholder-image.jpg"}
-          alt={name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-opacity duration-300"
-          priority={false}
-          style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }} // Initial zoom
-        />
-      </motion.div>
+      <Image
+        src={optimizedImageUrl}
+        alt={name}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        className="object-cover"
+        loading="lazy"
+        priority={false}
+        placeholder="blur"
+        blurDataURL="/placeholder-image-blur.jpg" // you can replace this with your own small base64 img
+      />
 
-      {/* Enhanced Gradient Overlay for Text Readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Gradient Overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-90" />
 
-      {/* Product Details - Positioned lower */}
+      {/* Product Details */}
       <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        animate={{
-          y: isHovered ? 20 : 40, // Lower starting position
-          opacity: isHovered ? 1 : 0.9
-        }}
-        transition={{ duration: 0.3 }}
-        className="absolute bottom-0 left-0 right-0 p-5 text-white" // Increased padding
+        className="absolute bottom-0 left-0 right-0 p-5 text-white"
       >
         <h3 className="text-lg font-bold truncate">{name}</h3>
         <div className="flex items-center gap-2 mt-2">
-          <span className="text-lg font-semibold">
-            ₹{offerPrice || price}
-          </span>
+          <span className="text-lg font-semibold">₹{offerPrice ?? price}</span>
           {offerPrice && (
-            <span className="text-sm line-through text-white/70">
-              ₹{price}
-            </span>
+            <span className="text-sm line-through text-white/70">₹{price}</span>
           )}
         </div>
-        
-        {/* Category Tag - Positioned lower */}
-        <motion.span 
-          className="inline-block mt-3 text-xs px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full"
-          initial={{ scale: 0 }}
-          animate={{ scale: isHovered ? 1 : 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          {category?.name || 'deltagarage'}
-        </motion.span>
+
+        {/* Category Tag */}
+        <span className="inline-block mt-3 text-xs px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full">
+          {category?.name || "deltagarage"}
+        </span>
       </motion.div>
 
-      {/* Additional subtle shadow at the bottom for better text contrast */}
+      {/* Bottom shadow gradient for better contrast */}
       <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
     </motion.div>
   );
 
-  return noLink ? cardContent : (
+  return noLink ? (
+    cardContent
+  ) : (
     <Link href={`/p/${_id}`} className="block h-full">
       {cardContent}
     </Link>

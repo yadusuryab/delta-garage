@@ -28,10 +28,25 @@ export function CategoryDisplay() {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      const cacheKey = "kspyn_categories";
+      const expiryKey = "kspyn_categories_expiry";
+  
+      const now = Date.now();
+      const cached = sessionStorage.getItem(cacheKey);
+      const expiry = parseInt(sessionStorage.getItem(expiryKey) || "0");
+  
+      if (cached && expiry > now) {
+        setCategories(JSON.parse(cached));
+        setLoading(false);
+        return;
+      }
+  
       try {
         const data: any = await getAllCategories();
-        if (!data || !Array.isArray(data))
-          throw new Error("Invalid product data");
+        if (!data || !Array.isArray(data)) throw new Error("Invalid product data");
+  
+        sessionStorage.setItem(cacheKey, JSON.stringify(data));
+        sessionStorage.setItem(expiryKey, (now + 2 * 60 * 60 * 1000).toString()); // 2 hours
         setCategories(data);
       } catch (err) {
         setError("Failed to fetch categories.");
@@ -40,9 +55,10 @@ export function CategoryDisplay() {
         setLoading(false);
       }
     };
-
+  
     fetchCategories();
   }, []);
+  
 
   useEffect(() => {
     if (error) toast(error);
@@ -169,8 +185,8 @@ const Feature = ({
   return (
     <div
       className={cn(
-        "flex flex-col border-b dark:border-neutral-800 py-10 relative group/feature overflow-hidden",
-        "md:border-b-0",
+        "flex flex-col py-10 relative group/feature overflow-hidden",
+        "border-b dark:border-neutral-800 md:border-b-0",
         index % 4 === 3 ? "md:border-r-0" : "md:border-r dark:border-neutral-800",
         index < 4 && "md:border-b dark:border-neutral-800",
         (index === 0 || index === 4) && "md:border-l dark:border-neutral-800",
@@ -178,7 +194,6 @@ const Feature = ({
         "h-full min-h-[250px]"
       )}
     >
-      {/* Background Image with overlay */}
       {imageUrl && (
         <>
           <div className="absolute inset-0 z-0">
@@ -186,21 +201,23 @@ const Feature = ({
               src={imageUrl}
               alt={title}
               fill
-              className="object-cover transition-transform duration-300 group-hover/feature:scale-105"
-              quality={80}
+              sizes="(max-width: 768px) 100vw, 25vw"
+              className="object-cover transition-transform duration-200 group-hover/feature:scale-105"
+              placeholder="blur"
+              blurDataURL="/placeholder.png"
+              priority={index === 0}
             />
           </div>
-          <div className="absolute inset-0 z-0 bg-black/40 group-hover/feature:bg-black/50 transition-colors duration-300" />
+          <div className="absolute inset-0 z-0 bg-black/40 group-hover/feature:bg-black/50 transition-colors duration-200" />
         </>
       )}
 
-      {/* Content */}
       <div className="mb-4 relative z-10 px-10 text-white">
         {icon}
       </div>
       <div className="text-lg font-bold mb-2 relative z-10 px-10">
-        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-white/70 group-hover/feature:bg-blue-500 transition-all duration-200 origin-center" />
-        <span className="group-hover/feature:translate-x-2 truncate transition duration-200 inline-block text-white">
+        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-white/70 group-hover/feature:bg-blue-500 transition-all duration-150 origin-center" />
+        <span className="group-hover/feature:translate-x-1 truncate transition duration-150 inline-block text-white">
           {title}
         </span>
       </div>
@@ -208,13 +225,7 @@ const Feature = ({
         {description}
       </p>
 
-      {/* Hover effects */}
-      {index < 4 && (
-        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-0" />
-      )}
-      {index >= 4 && (
-        <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-b from-black/30 to-transparent pointer-events-none z-0" />
-      )}
+      <div className="opacity-0 group-hover/feature:opacity-100 transition-opacity duration-150 absolute inset-0 h-full w-full bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-0" />
     </div>
   );
 };

@@ -1,8 +1,14 @@
 import { client } from "@/sanityClient";
 
 // Fetch all products
-export const getAllProducts = async (): Promise<any[] | undefined> => {
-  const query = `*[_type == "product"] {
+export const getAllProducts = async (
+  page: number = 1,
+  limit: number = 12
+): Promise<any[] | undefined> => {
+  const start = (page - 1) * limit;
+  const end = start + limit;
+
+  const query = `*[_type == "product"] | order(_createdAt desc) [${start}...${end}] {
     _id,
     name,
     category -> {
@@ -32,6 +38,7 @@ export const getAllProducts = async (): Promise<any[] | undefined> => {
     return undefined;
   }
 };
+
 
 // Fetch a single product by ID
 export const getProductById = async (id: string): Promise<any | undefined> => {

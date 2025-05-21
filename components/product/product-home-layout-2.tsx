@@ -6,50 +6,73 @@ import Splash from "../utils/splash";
 import { toast } from "sonner";
 import ProductCard3 from "./product-image-card-2";
 
-function ProductHomeGrid2() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+interface Product {
+  _id: string;
+  title: string;
+  price: number;
+  image: string;
+}
+
+const ProductHomeGrid2 = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   const fetchProducts = useCallback(async () => {
+    if (!hasMore || loading) return;
+
     try {
       setLoading(true);
-      const data: any = await getAllProducts();
-      
-      if (!data || !Array.isArray(data)) {
-        throw new Error("Invalid product data");
-      }
+      const newProducts = await getAllProducts(page);
+      if (!Array.isArray(newProducts)) throw new Error("Invalid data");
 
-      setProducts(data); // Set all products at once
+      setProducts((prev) => [...prev, ...newProducts]);
+      setHasMore(newProducts.length > 0);
+      setPage((prev) => prev + 1);
     } catch (err) {
-      setError("Failed to fetch products.");
+      setError("Failed to load products");
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, hasMore, loading]);
 
+  // ✅ Load only once at first, not again via scroll
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    fetchProducts(); // Only once
+  }, []);
 
   useEffect(() => {
     if (error) toast(error);
   }, [error]);
 
-  if (loading) return <Splash />;
+  // ✅ Only start observing after first fetch (i.e. page > 1)
+  useEffect(() => {
+    if (!observerRef.current || !hasMore || page <= 1) return;
 
-  if (!products || products.length === 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchProducts();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [fetchProducts, hasMore, page]);
+
+  if (products.length === 0 && loading) return <Splash />;
+
+  if (products.length === 0 && !loading) {
     return (
       <div className="p-4 text-center">
-        <p className="font-bold text-sm">
-          No Products Found, Please contact the Store for more Information.
-        </p>
-        <Button 
-          onClick={fetchProducts} 
-          className="mt-4"
-          variant="outline"
-        >
+        <p className="font-bold text-sm">No Products Found.</p>
+        <Button onClick={fetchProducts} className="mt-4" variant="outline">
           Retry
         </Button>
       </div>
@@ -60,14 +83,16 @@ function ProductHomeGrid2() {
     <div className="container mx-auto px-4 my-10">
       <h2 className="mb-6 text-2xl font-bold">Latest</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-        {products.map((product: any) => (
+        {products.map((product:any) => (
           <div key={product._id} className="w-full">
             <ProductCard3 product={product} />
           </div>
         ))}
       </div>
+      <div ref={observerRef} className="h-10" />
+      {loading && <p className="text-center mt-4">Loading...</p>}
     </div>
   );
-}
+};
 
 export default ProductHomeGrid2;
