@@ -66,8 +66,8 @@ export default function ProductCard3({
         className="object-cover"
         loading="lazy"
         priority={false}
-        placeholder="blur"
-        blurDataURL="/placeholder-image-blur.jpg" // you can replace this with your own small base64 img
+     
+       
       />
 
       {/* Gradient Overlay for readability */}

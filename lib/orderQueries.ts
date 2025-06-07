@@ -144,7 +144,7 @@ export const createOrder = async (orderData: {
     );
 
     // Prepare data for notifications
-    const totalAmount = orderData.payment.amount + orderData.shipping.charge;
+    const totalAmount = orderData.payment.amount;
     const addressString = `${orderData.customer.address.street}, ${orderData.customer.address.district}, ${orderData.customer.address.state} - ${orderData.customer.address.pincode}`;
     
     // WhatsApp notification
@@ -224,9 +224,9 @@ ${productList}
 💳 *Payment*:
 - Method: ${orderData.payment.method.toUpperCase()}
 - Status: ${orderData.payment.status}
-- Amount: ₹${orderData.payment.amount}
 - Shipping: ₹${orderData.shipping.charge}
-- *Total*: ₹${totalAmount}
+
+- *Total*: ₹${orderData.payment.amount}
       
 🚚 *Shipping Status*: ${orderData.shipping.status.toUpperCase()}
       
