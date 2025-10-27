@@ -17,7 +17,7 @@ export const OrderSummary = ({
   totalAmount,
   paymentMethod,
 }: OrderSummaryProps) => {
-  const isFreeShipping = subtotal >= 1000;
+
   const amountNeededForFreeShipping = 1000 - subtotal;
 
   return (
@@ -77,15 +77,13 @@ export const OrderSummary = ({
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground">Shipping Charges</span>
             <Badge variant="outline" className="text-xs">
-              {paymentMethod === 'cod' ? 'COD (+₹20)' : 'Online Payment'}
+              {paymentMethod === 'cod' ? 'COD' : 'Online Payment'}
             </Badge>
           </div>
           <span>
-            {isFreeShipping ? (
-              <span className="text-green-600">FREE</span>
-            ) : (
-              `₹${shippingCharge.toLocaleString('en-IN')}`
-            )}
+           
+              ₹{shippingCharge.toLocaleString('en-IN')}
+          
           </span>
         </div>
       </div>
@@ -97,17 +95,17 @@ export const OrderSummary = ({
         <span>₹{totalAmount.toLocaleString('en-IN')}</span>
       </div>
 
-      {!isFreeShipping && (
+      {/* {!isFreeShipping && (
         <div className="text-sm text-muted-foreground text-center pt-2">
           Add ₹{amountNeededForFreeShipping > 0 ? amountNeededForFreeShipping.toLocaleString('en-IN') : '0'} more for free shipping
         </div>
-      )}
+      )} */}
       
-      {paymentMethod === 'cod' && (
+      {/* {paymentMethod === 'cod' && (
         <div className="text-sm text-orange-600 text-center pt-1">
           Cash on Delivery available with ₹20 additional charge
         </div>
-      )}
+      )} */}
     </div>
   );
 };

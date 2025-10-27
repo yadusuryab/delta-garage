@@ -13,7 +13,10 @@ export interface CartItem {
   compatibility?: string;
   features?: string[];
   selectedSize?: number;
-  orderQuantity : number;
+  orderQuantity: number;
+  // Add these new fields
+  codCharge?: number;
+  prepaidCharge?: number;
   freeProduct?: {
     _id: string;
     name: string;
@@ -36,12 +39,9 @@ export const calculateTotalAmount = (
   shippingCharge: number,
   paymentMethod: 'online' | 'cod' = 'online'
 ): number => {
-  // Apply COD charge if payment method is COD
-  const finalShippingCharge = paymentMethod === 'cod' ? 
-    Math.max(shippingCharge, 100) : // Ensure minimum ₹100 for COD
-    shippingCharge;
-  
-  return subtotal + finalShippingCharge;
+  // Remove the hardcoded COD charge logic since shippingCharge now comes
+  // from the product-specific calculation in the checkout page
+  return subtotal + shippingCharge;
 };
 
 export const validateForm = (

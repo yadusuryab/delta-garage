@@ -40,13 +40,26 @@ export default function CheckoutPage() {
     setCartItems(cart);
   }, []);
 
+  const calculateShippingCharge = (method: "online" | "cod") => {
+    if (cartItems.length === 0) return method === "online" ? 80 : 100;
+    
+    // Use the charges from the first product, or default if not available
+    const firstProduct = cartItems[0];
+    if (method === "online") {
+      return firstProduct.prepaidCharge || 80;
+    } else {
+      return firstProduct.codCharge || 100;
+    }
+  };
+
   const subtotal = calculateSubtotal(cartItems);
   const totalAmount = calculateTotalAmount(subtotal, shippingCharge);
 
   const handlePaymentChange = (method: "online" | "cod") => {
     setPaymentMethod(method);
-    // Update shipping charge based on payment method
-    setShippingCharge(method === "online" ? 80 : 100);
+    // Update shipping charge based on payment method using product charges or defaults
+    const newShippingCharge = calculateShippingCharge(method);
+    setShippingCharge(newShippingCharge);
   };
 
   const handleInputChange = (
@@ -86,6 +99,8 @@ export default function CheckoutPage() {
           quantity: item.orderQuantity,
           price: item.offerPrice || item.price,
           image: item.images?.[0]?.asset?.url,
+          codCharge: item.codCharge || 100, // Include charges in order
+          prepaidCharge: item.prepaidCharge || 80, // Include charges in order
         })),
         payment: {
           method: paymentMethod,

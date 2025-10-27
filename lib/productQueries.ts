@@ -59,6 +59,8 @@ export const getProductById = async (id: string): Promise<any | undefined> => {
     quantity,
     price,
     offerPrice,
+    codCharge,
+    prepaidCharge,
     description,
     soldOut
   }`;

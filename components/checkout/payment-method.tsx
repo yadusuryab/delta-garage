@@ -41,13 +41,13 @@ export const PaymentMethod = ({
           <SelectItem value="online">
             <div className="flex items-center justify-between w-full">
               <span>Online Payment</span>
-              <span className="text-sm text-muted-foreground">₹80 shipping</span>
+             
             </div>
           </SelectItem>
           <SelectItem value="cod">
             <div className="flex items-center justify-between w-full">
               <span>Cash on Delivery</span>
-              <span className="text-sm text-muted-foreground">₹100 shipping</span>
+             
             </div>
           </SelectItem>
         </SelectContent>
