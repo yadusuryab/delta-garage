@@ -39,10 +39,9 @@ export const getAllProducts = async (
   }
 };
 
-
 // Fetch a single product by ID
 export const getProductById = async (id: string): Promise<any | undefined> => {
-  const query = `*[_type == "product" && _id == $id] {
+  const query = `*[_type == "product" && _id == $id && hidden != true] {
     _id,
     name,
     category -> {
@@ -79,7 +78,7 @@ export const getProductById = async (id: string): Promise<any | undefined> => {
 
 // Search for products by keyword
 export const searchProducts = async (keyword: string): Promise<any[] | undefined> => {
-  const query = `*[_type == "product" && (
+  const query = `*[_type == "product" && hidden != true && (
     name match $keyword || 
     brand match $keyword || 
     compatibility match $keyword || 
@@ -152,7 +151,7 @@ export const getAllCategories = async (): Promise<any[] | undefined> => {
 
 // Fetch products by category slug
 export const getProductsByCategory = async (categorySlug: string): Promise<any[] | undefined> => {
-  const query = `*[_type == "product" && category->slug.current == $categorySlug] {
+  const query = `*[_type == "product" && category->slug.current == $categorySlug && hidden != true] {
     _id,
     name,
     category -> {
