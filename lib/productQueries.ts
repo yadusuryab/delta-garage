@@ -8,7 +8,7 @@ export const getAllProducts = async (
   const start = (page - 1) * limit;
   const end = start + limit;
 
-  const query = `*[_type == "product"] | order(_createdAt desc) [${start}...${end}] {
+  const query = `*[_type == "product" && hidden != true] | order(_createdAt desc) [${start}...${end}] {
     _id,
     name,
     category -> {

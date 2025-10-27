@@ -72,7 +72,7 @@ const generateWhatsAppMessage = (order: Order) => {
 
 export default async function OrderDetailsPage({ params }: any) {
   const resolvedParams = await params;
-  const order: any = await getOrderById(resolvedParams.id);
+   const order : any = await getOrderById(resolvedParams.id);
 
   if (!order) {
     return (
@@ -81,6 +81,8 @@ export default async function OrderDetailsPage({ params }: any) {
       </div>
     );
   }
+  console.log(order.productDetails[0].productId.images);
+  
 
   return (
     <main className="container mx-auto md:px-16 px-2">
@@ -89,45 +91,45 @@ export default async function OrderDetailsPage({ params }: any) {
         {order.productDetails.length === 0 ? (
           <p className="text-muted-foreground mt-4 text-sm font-semibold">Your cart is empty.</p>
         ) : (
-          order.productDetails.map((item: any) => (
+          order.productDetails.map((item:any) => (
             <div key={item.productId._id} className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-start gap-3">
-                  {item.productId.images?.asset?.url && (
-                    <div className="relative w-12 h-12 rounded-md overflow-hidden border">
-                      <img
-                        src={item.productId?.images.asset.url}
-                        alt={item.productId.name}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  )}
-                  <div>
-                    <h3 className="font-medium">{item.productId.name}</h3>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {item.productId.brand && (
-                        <Badge variant="outline" className="text-xs">
-                          {item.productId.brand}
-                        </Badge>
-                      )}
-                      {item.productId.category?.name && (
-                        <Badge variant="outline" className="text-xs">
-                          {item.productId.category?.name || 'deltagarage'}
-                        </Badge>
-                      )}
-                    </div>
+            <div className="flex-1">
+              <div className="flex items-start gap-3">
+                {item.productId.images?.asset?.url && (
+                  <div className="relative w-12 h-12 rounded-md overflow-hidden border">
+                    <img
+                      src={item.productId?.images.asset.url}
+                      alt={item.productId.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                )}
+                <div>
+                  <h3 className="font-medium">{item.productId.name}</h3>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {item.productId.brand && (
+                      <Badge variant="outline" className="text-xs">
+                        {item.productId.brand}
+                      </Badge>
+                    )}
+                    {item.productId.category?.name && (
+                      <Badge variant="outline" className="text-xs">
+                        {item.productId.category?.name || 'deltagarage'}
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="font-medium">
-                  ₹{((item.productId.offerPrice || item.productId.price) * (1)).toLocaleString('en-IN')}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {item.productId.quantity} × ₹{(item.productId.offerPrice || item.productId.price).toLocaleString('en-IN')}
-                </p>
-              </div>
             </div>
+            <div className="text-right">
+              <p className="font-medium">
+                ₹{((item.productId.offerPrice || item.productId.price) * (1)).toLocaleString('en-IN')}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {item.productId.quantity} × ₹{(item.productId.offerPrice || item.productId.price).toLocaleString('en-IN')}
+              </p>
+            </div>
+          </div>
           ))
         )}
       </div>
@@ -142,49 +144,7 @@ export default async function OrderDetailsPage({ params }: any) {
             <p>Payment Method: {order.payment_method}</p>
             <p>Status: <span className="text-bw">{order.status}</span></p>
             <Separator />
-            
-            {/* Shipping and Tracking Section */}
-            <div className="space-y-2">
-              <h3 className="font-medium">Shipping Information</h3>
-              <p>Shipping Address: {order.address}, {order.district}, {order.state} - {order.pincode}</p>
-              
-              {order.trackingId ? (
-                <div className="mt-4">
-                  <h4 className="font-medium">DTDC Tracking Information</h4>
-                  <p>Tracking ID: {order.trackingId}</p>
-                  <Button variant="outline" className="mt-2" asChild>
-                    <Link 
-                      href={`https://www.dtdc.in/tracking.asp?trackType=awb_no&txtCnNo=${order.trackingId}`} 
-                      target="_blank"
-                    >
-                      Track Package on DTDC
-                    </Link>
-                  </Button>
-                </div>
-              ) : (
-                <div className="mt-4">
-                  <h4 className="font-medium">Tracking Information</h4>
-                  <p className="text-muted-foreground">No tracking ID available yet.</p>
-                  <form className="mt-2 space-y-2">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Enter DTDC Tracking ID"
-                        className="flex-1 px-3 py-2 border rounded-md text-sm"
-                      />
-                      <Button type="submit" variant="outline">
-                        Update Tracking
-                      </Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      If you have received a tracking ID from us, you can enter it here.
-                    </p>
-                  </form>
-                </div>
-              )}
-            </div>
-            
-            <Separator />
+            <p>Shipping Address: {order.address}, {order.district}, {order.state} - {order.pincode}</p>
             <p>Order Date: {new Date(order.order_date).toLocaleString()}</p>
             <p>Payment Amount: ₹{order.payment_amount}</p>
             <p>Shipping Charge: ₹{order.shipping_charge}</p>
