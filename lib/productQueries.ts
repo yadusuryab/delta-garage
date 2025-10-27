@@ -8,7 +8,7 @@ export const getAllProducts = async (
   const start = (page - 1) * limit;
   const end = start + limit;
 
-  const query = `*[_type == "product" && hidden != true] | order(_createdAt desc) [${start}...${end}] {
+  const query = `*[_type == "product" && hidden != true && !(_id in path("drafts.**"))] | order(_createdAt desc) [${start}...${end}] {
     _id,
     name,
     category -> {
@@ -39,10 +39,9 @@ export const getAllProducts = async (
   }
 };
 
-
 // Fetch a single product by ID
 export const getProductById = async (id: string): Promise<any | undefined> => {
-  const query = `*[_type == "product" && _id == $id] {
+  const query = `*[_type == "product" && _id == $id && hidden != true && !(_id in path("drafts.**"))] {
     _id,
     name,
     category -> {
@@ -79,7 +78,7 @@ export const getProductById = async (id: string): Promise<any | undefined> => {
 
 // Search for products by keyword
 export const searchProducts = async (keyword: string): Promise<any[] | undefined> => {
-  const query = `*[_type == "product" && (
+  const query = `*[_type == "product" && hidden != true && !(_id in path("drafts.**")) && (
     name match $keyword || 
     brand match $keyword || 
     compatibility match $keyword || 
@@ -126,7 +125,7 @@ export const addToCart = (product: any) => {
 
 // Fetch all categories
 export const getAllCategories = async (): Promise<any[] | undefined> => {
-  const query = `*[_type == "category"] {
+  const query = `*[_type == "category" && !(_id in path("drafts.**"))] {
     _id,
     name,
     slug,
@@ -152,7 +151,7 @@ export const getAllCategories = async (): Promise<any[] | undefined> => {
 
 // Fetch products by category slug
 export const getProductsByCategory = async (categorySlug: string): Promise<any[] | undefined> => {
-  const query = `*[_type == "product" && category->slug.current == $categorySlug] {
+  const query = `*[_type == "product" && category->slug.current == $categorySlug && hidden != true && !(_id in path("drafts.**"))] {
     _id,
     name,
     category -> {
