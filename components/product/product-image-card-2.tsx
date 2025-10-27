@@ -40,7 +40,7 @@ export default function ProductCard3({
   const { _id, name, category, images, price, offerPrice, soldOut } = product;
 
   // Sanity image optimization query params
-  const baseImageUrl = images[0]?.asset.url || "/placeholder-image.jpg";
+  const baseImageUrl = images[0]?.asset?.url || "/placeholder-image.jpg";
   const optimizedImageUrl = `${baseImageUrl}?w=400&h=533&fit=crop&auto=format`;
 
   const cardContent = (
