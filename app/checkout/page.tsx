@@ -23,7 +23,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">(
     "online"
   );
-  const [shippingCharge, setShippingCharge] = useState(80); // Default to online shipping charge
+  const [shippingCharge, setShippingCharge] = useState(0); // Start with 0 until calculated
   const [customerDetails, setCustomerDetails] = useState({
     name: "",
     email: "",
@@ -38,18 +38,29 @@ export default function CheckoutPage() {
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCartItems(cart);
+    
+    // Calculate initial shipping charge based on cart items
+    if (cart.length > 0) {
+      const initialCharge = calculateShippingCharge("online", cart);
+      setShippingCharge(initialCharge);
+    }
   }, []);
 
-  const calculateShippingCharge = (method: "online" | "cod") => {
-    if (cartItems.length === 0) return method === "online" ? 80 : 100;
+  const calculateShippingCharge = (method: "online" | "cod", items: CartItem[] = cartItems) => {
+    if (items.length === 0) return method === "online" ? 80 : 100;
     
-    // Use the charges from the first product, or default if not available
-    const firstProduct = cartItems[0];
+    // Calculate shipping based on all products in cart
+    // For multiple products, you might want to use the highest charge or sum them
+    // This example uses the highest charge among all products
+    let calculatedCharge = 0;
+    
     if (method === "online") {
-      return firstProduct.prepaidCharge || 80;
+      calculatedCharge = Math.max(...items.map(item => item.prepaidCharge || 80));
     } else {
-      return firstProduct.codCharge || 100;
+      calculatedCharge = Math.max(...items.map(item => item.codCharge || 100));
     }
+    
+    return calculatedCharge;
   };
 
   const subtotal = calculateSubtotal(cartItems);
@@ -57,7 +68,7 @@ export default function CheckoutPage() {
 
   const handlePaymentChange = (method: "online" | "cod") => {
     setPaymentMethod(method);
-    // Update shipping charge based on payment method using product charges or defaults
+    // Update shipping charge based on payment method using product charges
     const newShippingCharge = calculateShippingCharge(method);
     setShippingCharge(newShippingCharge);
   };
