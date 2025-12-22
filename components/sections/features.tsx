@@ -22,7 +22,7 @@ export function FeaturesSection() {
     {
       title: "Stylish, Functional & Affordable",
       description:
-        "From interior upgrades to exterior enhancements — shop top-quality accessories at competitive prices. DM 📩 or call ☎️ 96560 60874 to order.",
+        "From interior upgrades to exterior enhancements — shop top-quality accessories at competitive prices. DM 📩 or call ☎️ 70127 65708 to order.",
       skeleton: "",
       className: "col-span-1 lg:col-span-3 border-b lg:border-r",
     },
@@ -48,7 +48,7 @@ export function FeaturesSection() {
           quality products designed to elevate your vehicle’s look and
           functionality. We provide secure Cash on Delivery across India for a
           smooth, hassle-free shopping experience. Order now via DM or call
-          96560 60874.
+          70127 65708.
         </p>
       </div>
 
