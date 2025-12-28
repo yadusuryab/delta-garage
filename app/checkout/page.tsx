@@ -16,14 +16,14 @@ import { PaymentMethod } from "@/components/checkout/payment-method";
 import Transaction from "@/components/checkout/transaction-details";
 import { createOrder, updateOrderPayment } from "@/lib/orderQueries";
 import { Button } from "@/components/ui/button";
+import { validatePromoCode, calculateTotals } from "@/lib/promoUtils";
+import { PromoCodeInput } from "@/components/checkout/promo-code-input";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">(
-    "online"
-  );
-  const [shippingCharge, setShippingCharge] = useState(0); // Start with 0 until calculated
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
+  const [shippingCharge, setShippingCharge] = useState(0);
   const [customerDetails, setCustomerDetails] = useState({
     name: "",
     email: "",
@@ -34,24 +34,36 @@ export default function CheckoutPage() {
     pincode: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  
+  // New state for promo code
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<any>(null);
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+  const [promoError, setPromoError] = useState("");
 
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCartItems(cart);
     
-    // Calculate initial shipping charge based on cart items
     if (cart.length > 0) {
       const initialCharge = calculateShippingCharge("online", cart);
       setShippingCharge(initialCharge);
+    }
+    
+    // Load saved promo code from localStorage
+    const savedPromo = localStorage.getItem("appliedPromoCode");
+    if (savedPromo) {
+      const { code, discountAmount, promoData } = JSON.parse(savedPromo);
+      setPromoCode(code);
+      setPromoDiscount(discountAmount);
+      setAppliedPromo(promoData);
     }
   }, []);
 
   const calculateShippingCharge = (method: "online" | "cod", items: CartItem[] = cartItems) => {
     if (items.length === 0) return method === "online" ? 80 : 100;
     
-    // Calculate shipping based on all products in cart
-    // For multiple products, you might want to use the highest charge or sum them
-    // This example uses the highest charge among all products
     let calculatedCharge = 0;
     
     if (method === "online") {
@@ -63,14 +75,61 @@ export default function CheckoutPage() {
     return calculatedCharge;
   };
 
-  const subtotal = calculateSubtotal(cartItems);
-  const totalAmount = calculateTotalAmount(subtotal, shippingCharge);
+  const handleApplyPromoCode = async () => {
+    if (!promoCode.trim()) {
+      setPromoError("Please enter a promo code");
+      return;
+    }
+
+    setIsValidatingPromo(true);
+    setPromoError("");
+
+    const subtotal = calculateSubtotal(cartItems);
+    const validation = await validatePromoCode(promoCode, cartItems, subtotal, true);
+
+    if (validation.isValid && validation.discountAmount !== undefined) {
+      setAppliedPromo(validation.promoCode);
+      setPromoDiscount(validation.discountAmount);
+      
+      // Save to localStorage
+      localStorage.setItem("appliedPromoCode", JSON.stringify({
+        code: promoCode,
+        discountAmount: validation.discountAmount,
+        promoData: validation.promoCode
+      }));
+      
+      // If free shipping promo, update shipping charge
+      if (validation.promoCode?.discountType === 'freeShipping') {
+        setShippingCharge(0);
+      }
+    } else {
+      setPromoError(validation.message || "Invalid promo code");
+      removePromoCode();
+    }
+    
+    setIsValidatingPromo(false);
+  };
+
+  const removePromoCode = () => {
+    setPromoCode("");
+    setAppliedPromo(null);
+    setPromoDiscount(0);
+    setPromoError("");
+    localStorage.removeItem("appliedPromoCode");
+    
+    // Reset shipping charge if it was free shipping
+    const method = paymentMethod;
+    const newShippingCharge = calculateShippingCharge(method, cartItems);
+    setShippingCharge(newShippingCharge);
+  };
 
   const handlePaymentChange = (method: "online" | "cod") => {
     setPaymentMethod(method);
-    // Update shipping charge based on payment method using product charges
-    const newShippingCharge = calculateShippingCharge(method);
-    setShippingCharge(newShippingCharge);
+    // Don't apply shipping charge if free shipping promo is active
+    if (appliedPromo?.discountType !== 'freeShipping') {
+      const newShippingCharge = calculateShippingCharge(method);
+      setShippingCharge(newShippingCharge);
+    }
   };
 
   const handleInputChange = (
@@ -79,6 +138,11 @@ export default function CheckoutPage() {
     const { name, value } = e.target;
     setCustomerDetails((prev) => ({ ...prev, [name]: value }));
   };
+
+  const subtotal = calculateSubtotal(cartItems);
+  const totals = calculateTotals(cartItems, promoDiscount, shippingCharge, 
+    appliedPromo?.discountType === 'freeShipping');
+  const totalAmount = totals.totalAmount;
 
   const onCheckout = async (transactionId?: string) => {
     if (!validateForm(customerDetails, cartItems)) return;
@@ -90,7 +154,7 @@ export default function CheckoutPage() {
     setIsLoading(true);
 
     try {
-      // Enhanced order details with product information
+      // Enhanced order details with promo information
       const orderDetails: any = {
         customer: {
           name: customerDetails.name,
@@ -110,8 +174,8 @@ export default function CheckoutPage() {
           quantity: item.orderQuantity,
           price: item.offerPrice || item.price,
           image: item.images?.[0]?.asset?.url,
-          codCharge: item.codCharge || 100, // Include charges in order
-          prepaidCharge: item.prepaidCharge || 80, // Include charges in order
+          codCharge: item.codCharge || 100,
+          prepaidCharge: item.prepaidCharge || 80,
         })),
         payment: {
           method: paymentMethod,
@@ -120,10 +184,17 @@ export default function CheckoutPage() {
           transactionId: transactionId || null,
         },
         shipping: {
-          charge: shippingCharge,
+          charge: appliedPromo?.discountType === 'freeShipping' ? 0 : shippingCharge,
           status: "pending",
           method: paymentMethod === "cod" ? "COD" : "Prepaid",
         },
+        // Add promo code details
+        promoCode: appliedPromo ? {
+          code: appliedPromo.code,
+          discountAmount: promoDiscount,
+          promoId: appliedPromo._id,
+          discountType: appliedPromo.discountType,
+        } : null,
         orderDate: new Date().toISOString(),
         status: "processing",
       };
@@ -132,11 +203,21 @@ export default function CheckoutPage() {
 
       if (order && paymentMethod === "online") {
         await updateOrderPayment(order._id, transactionId!);
+        
+        // Update promo code usage count
+        if (appliedPromo) {
+          await fetch('/api/update-promo-usage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ promoId: appliedPromo._id }),
+          });
+        }
       }
 
-      // Clear cart on successful order
       if (order) {
+        // Clear cart and promo
         localStorage.removeItem("cart");
+        localStorage.removeItem("appliedPromoCode");
         window.dispatchEvent(new Event("cartUpdated"));
         router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/order/${order._id}`);
       } else {
@@ -181,6 +262,25 @@ export default function CheckoutPage() {
             </CardContent>
           </Card>
 
+          {/* Add Promo Code Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Promo Code</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PromoCodeInput
+                promoCode={promoCode}
+                setPromoCode={setPromoCode}
+                appliedPromo={appliedPromo}
+                promoDiscount={promoDiscount}
+                isValidating={isValidatingPromo}
+                promoError={promoError}
+                onApply={handleApplyPromoCode}
+                onRemove={removePromoCode}
+              />
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Payment Method</CardTitle>
@@ -190,6 +290,7 @@ export default function CheckoutPage() {
                 paymentMethod={paymentMethod}
                 handlePaymentChange={handlePaymentChange}
                 shippingCharge={shippingCharge}
+                isFreeShipping={appliedPromo?.discountType === 'freeShipping'}
               />
             </CardContent>
           </Card>
@@ -203,10 +304,12 @@ export default function CheckoutPage() {
             <CardContent>
               <OrderSummary
                 cartItems={cartItems}
-                shippingCharge={shippingCharge}
+                shippingCharge={appliedPromo?.discountType === 'freeShipping' ? 0 : shippingCharge}
                 subtotal={subtotal}
                 totalAmount={totalAmount}
                 paymentMethod={paymentMethod}
+                promoDiscount={promoDiscount}
+                appliedPromo={appliedPromo}
               />
             </CardContent>
           </Card>

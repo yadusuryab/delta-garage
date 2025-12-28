@@ -24,6 +24,8 @@ export interface CartItem {
     images: { asset: { url: string } }[];
     selectedSize?: number;
   } | null;
+  isExcludedFromPromo?: boolean;
+
 }
 
 export const calculateSubtotal = (cartItems: CartItem[]): number => {
