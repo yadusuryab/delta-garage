@@ -1,6 +1,6 @@
+// app/categories/page.tsx
 import { AllCategoriesSection } from '@/components/categories/all-categories'
-import type { AppProps } from 'next/app'
 
-export default function Page({ Component, pageProps }: AppProps) {
-  return <AllCategoriesSection/>
+export default function CategoriesPage() {
+  return <AllCategoriesSection />
 }
