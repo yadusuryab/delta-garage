@@ -20,7 +20,6 @@ import {
   IconSparkles,
   IconClock
 } from "@tabler/icons-react";
-import SkeletonCategory from "./SkeletonCategory";
 
 // SEO-friendly icons mapping (matches category names)
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -43,81 +42,22 @@ export function CategoryDisplay() {
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout>(null);
 
-  // Preload next chunk when user approaches end
-  const LOAD_THRESHOLD = 100; // pixels from end
-
-  // Fetch with proper error handling and caching
+  // Fetch categories
   const fetchCategories = useCallback(async () => {
-    const cacheKey = "kspyn_categories_v2";
-    const cacheTimestampKey = "kspyn_categories_timestamp";
-    const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
-    
     try {
-      // Check cache first
-      const cached = localStorage.getItem(cacheKey);
-      const timestamp = localStorage.getItem(cacheTimestampKey);
-      
-      if (cached && timestamp) {
-        const isStale = Date.now() - parseInt(timestamp) > CACHE_DURATION;
-        
-        if (!isStale) {
-          const data = JSON.parse(cached);
-          setCategories(data);
-          setLoading(false);
-          
-          // Refresh in background if stale
-          if (isStale) {
-            setTimeout(() => fetchCategories(), 0);
-          }
-          return;
-        }
-      }
-
+      setLoading(true);
       const data = await getAllCategories();
       
       if (!data || !Array.isArray(data)) {
         throw new Error("Invalid categories data");
       }
-
-      // Optimize image data - strip unnecessary metadata
-      const optimizedData = data.map(category => ({
-        _id: category._id,
-        name: category.name || 'Unknown Category',
-        slug: category.slug?.current || 'uncategorized',
-        description: `Explore our premium ${category.name || 'car'} accessories collection`,
-        imageUrl: category.image?.asset?.url || null,
-        imageDimensions: category.image?.asset?.metadata?.dimensions || null
-      }));
-
-      // Cache optimized data
-      localStorage.setItem(cacheKey, JSON.stringify(optimizedData));
-      localStorage.setItem(cacheTimestampKey, Date.now().toString());
       
-      setCategories(optimizedData);
-      
-      // Preload category images in background
-      setTimeout(() => {
-        optimizedData.forEach(cat => {
-          if (cat.imageUrl) {
-            const img = new window.Image();
-            img.src = cat.imageUrl;
-          }
-        });
-      }, 0);
+      setCategories(data);
       
     } catch (err) {
       console.error('Category fetch error:', err);
-      toast.error("Failed to load categories. Showing cached data if available.");
-      
-      // Try to use any cached data even if stale
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        try {
-          setCategories(JSON.parse(cached));
-        } catch (e) {
-          setCategories([]);
-        }
-      }
+      toast.error("Failed to load categories.");
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -126,7 +66,6 @@ export function CategoryDisplay() {
   useEffect(() => {
     fetchCategories();
     
-    // Cleanup
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
@@ -179,19 +118,23 @@ export function CategoryDisplay() {
     }, 50);
   }, []);
 
-  // Memoized category features for performance
+  // Memoized category features
   const categoryFeatures = useMemo(() => 
-    categories.map((category) => ({
-      id: category._id,
-      title: category.name,
-      description: category.description,
-      icon: CATEGORY_ICONS[category.name] || <IconCar aria-label="Car Accessories Icon" />,
-      slug: category.slug,
-      imageUrl: category.imageUrl,
-      imageDimensions: category.imageDimensions,
-      // Generate SEO-friendly alt text
-      alt: `${category.name} car accessories | Premium auto parts`
-    }))
+    categories.map((category) => {
+      // Get the slug - handle both slug.current and direct slug
+      const slug = category.slug?.current || category.slug;
+      
+      return {
+        id: category._id,
+        title: category.name || 'Unknown Category',
+        description: `Explore our ${category.name || 'car'} accessories collection`,
+        icon: CATEGORY_ICONS[category.name] || <IconCar aria-label="Car Accessories Icon" />,
+        slug: slug || 'uncategorized',
+        imageUrl: category.image?.asset?.url || null,
+        imageAlt: category.image?.alt || `${category.name} car accessories`,
+        productCount: category.productCount || 0
+      };
+    })
   , [categories]);
 
   // Loading state
@@ -200,7 +143,7 @@ export function CategoryDisplay() {
       <div className="max-w-7xl mx-auto px-4 mt-5">
         <div className="flex overflow-x-hidden gap-4 pb-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <SkeletonCategory key={i} />
+            <div key={i} className="shrink-0 w-[280px] h-[180px] md:w-[300px] md:h-[200px] bg-gray-100 rounded-2xl animate-pulse" />
           ))}
         </div>
       </div>
@@ -223,7 +166,6 @@ export function CategoryDisplay() {
       aria-label="Product Categories"
       className="relative z-10 max-w-7xl mx-auto px-4 mt-5"
     >
-      {/* SEO Heading (hidden visually but accessible) */}
       <h2 className="sr-only">Car Accessories Categories</h2>
       
       <div className="relative group">
@@ -241,7 +183,6 @@ export function CategoryDisplay() {
                 "p-2 rounded-full shadow-lg",
                 "transition-all duration-200",
                 "hover:scale-105 active:scale-95",
-        
                 scrollPosition <= 0 && "opacity-50 cursor-not-allowed"
               )}
             >
@@ -282,7 +223,7 @@ export function CategoryDisplay() {
             <Link
               href={`/products?category=${feature.slug}`}
               key={feature.id}
-              prefetch={index < 3} // Prefetch first 3 categories
+              prefetch={index < 3}
               className="snap-start shrink-0"
               aria-label={`Browse ${feature.title} category`}
             >
@@ -300,24 +241,22 @@ export function CategoryDisplay() {
                   "group/category"
                 )}
               >
-                {/* Background Image with Lazy Loading */}
+                {/* Background Image */}
                 {feature.imageUrl ? (
                   <div className="absolute inset-0">
                     <Image
                       src={feature.imageUrl}
-                      alt={feature.alt}
+                      alt={feature.imageAlt}
                       fill
                       sizes="(max-width: 768px) 280px, 300px"
                       className="object-cover"
                       loading={index > 2 ? "lazy" : "eager"}
                       priority={index < 3}
                       quality={75}
-                      placeholder="blur"
-                      blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmMWYxIi8+PC9zdmc+"
                     />
                   </div>
                 ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200" />
                 )}
 
                 {/* Gradient Overlay */}
@@ -329,7 +268,7 @@ export function CategoryDisplay() {
                     <div className={cn(
                       "p-2 rounded-lg",
                       "bg-white/20 backdrop-blur-sm",
-                      "group-hover/category:bg-blue-500/30",
+                      "group-hover/category:bg-primary/30",
                       "transition-colors duration-200"
                     )}>
                       <div className="text-white">
@@ -337,10 +276,12 @@ export function CategoryDisplay() {
                       </div>
                     </div>
                     
-                    {index < 3 && (
-                      <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/20 backdrop-blur-sm">
-                        <IconSparkles className="w-3 h-3 text-blue-300" />
-                        <span className="text-xs font-semibold text-blue-100">Popular</span>
+                    {feature.productCount > 0 && (
+                      <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/20 backdrop-blur-sm">
+                        <IconSparkles className="w-3 h-3 text-primary-foreground" />
+                        <span className="text-xs font-semibold text-primary-foreground">
+                          {feature.productCount}+
+                        </span>
                       </div>
                     )}
                   </div>
@@ -349,10 +290,6 @@ export function CategoryDisplay() {
                     {feature.title}
                   </h3>
                   
-                  {/* <p className="text-sm text-gray-200 line-clamp-2">
-                    {feature.description}
-                  </p> */}
-
                   {/* Hidden SEO content */}
                   <div className="sr-only">
                     Shop {feature.title} accessories for your vehicle. Premium quality auto parts.
@@ -362,7 +299,7 @@ export function CategoryDisplay() {
                 {/* Hover effect */}
                 <div className={cn(
                   "absolute inset-0",
-                  "bg-gradient-to-t from-blue-500/10 to-transparent",
+                  "bg-gradient-to-t from-primary/10 to-transparent",
                   "opacity-0 group-hover/category:opacity-100",
                   "transition-opacity duration-200"
                 )} />
@@ -371,82 +308,53 @@ export function CategoryDisplay() {
           ))}
         </div>
 
-        {/* Scroll indicator dots (for mobile) */}
+        {/* Scroll progress indicator */}
         {showScrollButtons && (
-  <div className="flex justify-center mt-4 md:hidden px-4">
-    <div className="relative w-full max-w-md">
-      {/* Progress Bar Container */}
-      <div 
-        className="relative h-1.5 bg-secondary/20 rounded-full overflow-hidden cursor-pointer"
-        onClick={(e) => {
-          if (!scrollContainerRef.current) return;
-          
-          const rect = e.currentTarget.getBoundingClientRect();
-          const clickX = e.clientX - rect.left;
-          const percentage = clickX / rect.width;
-          
-          const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth;
-          const targetScroll = percentage * maxScroll;
-          
-          scrollContainerRef.current.scrollTo({
-            left: targetScroll,
-            behavior: 'smooth'
-          });
-        }}
-      >
-        {/* Static Track */}
-        <div className="absolute inset-0" />
-        
-        {/* Animated Progress */}
-        <motion.div
-          className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary via-primary/90 to-primary/80 rounded-full"
-          initial={{ width: "0%" }}
-          animate={{ 
-            width: `${Math.min(
-              (scrollPosition / (scrollContainerRef.current?.scrollWidth || 1)) * 100,
-              100
-            )}%` 
-          }}
-          transition={{ type: "spring", stiffness: 150, damping: 20 }}
-        />
-        
-        {/* Draggable Handle */}
-        <motion.div
-          className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-primary rounded-full shadow-md cursor-grab active:cursor-grabbing"
-          style={{ 
-            left: `${Math.min(
-              (scrollPosition / (scrollContainerRef.current?.scrollWidth || 1)) * 100,
-              100
-            )}%` 
-          }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 100 }}
-          dragElastic={0}
-          onDrag={(_, info) => {
-            if (!scrollContainerRef.current) return;
-            
-            const containerWidth = scrollContainerRef.current.clientWidth;
-            const percentage = (info.point.x - containerWidth / 2) / containerWidth;
-            
-            const maxScroll = scrollContainerRef.current.scrollWidth - containerWidth;
-            const targetScroll = percentage * maxScroll;
-            
-            scrollContainerRef.current.scrollLeft = targetScroll;
-          }}
-        />
-      </div>
-      
-      {/* Progress Text */}
-      <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-        <span>Start</span>
-        <span className="font-medium">
-          {Math.round((scrollPosition / (scrollContainerRef.current?.scrollWidth || 1)) * 100)}%
-        </span>
-        <span>End</span>
-      </div>
-    </div>
-  </div>
-)}
+          <div className="flex justify-center mt-4 md:hidden px-4">
+            <div className="relative w-full max-w-md">
+              {/* Progress Bar Container */}
+              <div 
+                className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden cursor-pointer"
+                onClick={(e) => {
+                  if (!scrollContainerRef.current) return;
+                  
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const clickX = e.clientX - rect.left;
+                  const percentage = clickX / rect.width;
+                  
+                  const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth;
+                  const targetScroll = percentage * maxScroll;
+                  
+                  scrollContainerRef.current.scrollTo({
+                    left: targetScroll,
+                    behavior: 'smooth'
+                  });
+                }}
+              >
+                {/* Animated Progress */}
+                <motion.div
+                  className="absolute left-0 top-0 h-full bg-primary rounded-full"
+                  animate={{ 
+                    width: `${Math.min(
+                      (scrollPosition / (scrollContainerRef.current?.scrollWidth || 1)) * 100,
+                      100
+                    )}%` 
+                  }}
+                  transition={{ type: "spring", stiffness: 150, damping: 20 }}
+                />
+              </div>
+              
+              {/* Progress Text */}
+              <div className="flex justify-between mt-2 text-xs text-gray-500">
+                <span>Scroll</span>
+                <span className="font-medium">
+                  {Math.round((scrollPosition / (scrollContainerRef.current?.scrollWidth || 1)) * 100)}%
+                </span>
+                <span>Explore</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
