@@ -63,11 +63,11 @@ export default function CartPage() {
 
   return (
     <main className="container mx-auto md:px-16 px-2">
-      <SHeading
+      {/* <SHeading
         title="Your Cart"
         description="Confirm your Products and Proceed to Checkout."
         nolink
-      />
+      /> */}
       <div className="md:flex grid gap-6 w-full justify-between">
         <div className="w-full grid gap-4">
           {cartItems.length === 0 ? (
@@ -82,7 +82,7 @@ export default function CartPage() {
               </Link>
             </div>
           ) : (
-            cartItems.map((item) => (
+            cartItems.map((item:any) => (
               <CartItem
                 key={item._id}
                 item={item}

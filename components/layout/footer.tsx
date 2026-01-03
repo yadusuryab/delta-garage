@@ -48,7 +48,6 @@ function Footer() {
               <p>{site.address}</p>
               {/* <p>Tech City, TC 12345</p> */}
               <p>Phone: {site.phone}</p>
-              <p>Email: {site.email}</p>
             </address>
           </div>
           <div className="relative">
@@ -69,25 +68,36 @@ function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-12 flex flex-col text-muted-foreground font-semibold  justify-between gap-4 border-t pt-8  md:flex-row">
-          <p className="text-sm">
-            © {currentYear} {site.name}. All rights reserved.
-          </p>
-          <nav className="grid md:flex gap-2 text-sm">
-            <Link
-              href="/privacy-policy"
-              className="transition-colors hover:text-main"
-            >
-              Privacy Policy
-            </Link>
-            <Link href="/T&C" className="transition-colors hover:text-main">
-              Terms & Conditions
-            </Link>
-            <Link href="/cookies" className="transition-colors hover:text-main">
-              Cookie Settings
-            </Link>
-          </nav>
-        </div>
+        <div className="mt-12 border-t pt-8">
+  <div className="flex flex-col items-center gap-6 text-sm text-muted-foreground md:flex-row md:justify-between">
+    <p>© {currentYear} {site.name}. All rights reserved.</p>
+    
+    <div className="flex flex-wrap justify-center gap-4">
+      <Link href="/privacy-policy" className="hover:text-main">
+        Privacy
+      </Link>
+      <span className="text-gray-300">•</span>
+      <Link href="/terms" className="hover:text-main">
+        Terms
+      </Link>
+      <span className="text-gray-300">•</span>
+      <Link href="/cookies" className="hover:text-main">
+        Cookies
+      </Link>
+    </div>
+    
+    <p>
+      Wesbite Built by{" "}
+      <Link 
+        href="https://myshopigo.shop" 
+        className="text-main font-semibold  "
+        target="_blank"
+      >
+        Shopigo
+      </Link>
+    </p>
+  </div>
+</div>
       </div>
     </footer>
   );

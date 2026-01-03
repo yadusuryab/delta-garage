@@ -5,24 +5,12 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { site } from "@/lib/site-config";
 import { Toaster } from "@/components/ui/sonner";
 import { Footer } from "@/components/layout/footer";
+import {Inter } from 'next/font/google';
 import Header2 from "@/components/layout/header2";
 import OGimage from '@/public/og.png';
 import { getAllProducts } from "@/lib/productQueries";
 
-const inter = localFont({
-  src: [
-    {
-      path: "../public/HelveticaNeueRoman.otf",
-      weight: "normal",
-      style: "normal",
-    },
-    {
-      path: "../public/HelveticaNeueMedium.otf",
-      weight: "bold",
-      style: "bold",
-    },
-  ],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: `${site.name} | Buy Quality Car Accessories at Affordable Prices`,
@@ -133,7 +121,7 @@ export default async function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <Header2 />
-          <div className="min-h-screen  pb-10">{children}</div>
+          <div className="min-h-screen  ">{children}</div>
           <Footer />
           <Toaster />
         </ThemeProvider>
