@@ -46,6 +46,53 @@ export default function CheckoutPage() {
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [promoError, setPromoError] = useState("");
+  // Add this state for form errors
+const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+
+// Update the validateCurrentStep function to be more detailed:
+
+
+// Add this new function for detailed customer details validation:
+const validateCustomerDetails = () => {
+  const newErrors: {[key: string]: string} = {};
+  
+  // Check required fields
+  const requiredFields = ["name", "email", "contact1", "address", "district", "state", "pincode"];
+  requiredFields.forEach(field => {
+    if (!customerDetails[field as keyof typeof customerDetails]?.trim()) {
+      newErrors[field] = "This field is required";
+    }
+  });
+
+  // Validate phone number
+  if (customerDetails.contact1 && !/^[6-9]\d{9}$/.test(customerDetails.contact1)) {
+    newErrors.contact1 = "Please enter a valid 10-digit Indian phone number";
+  }
+
+  // Validate email
+  if (customerDetails.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerDetails.email)) {
+    newErrors.email = "Please enter a valid email address";
+  }
+
+  // Validate pincode
+  if (customerDetails.pincode && !/^\d{6}$/.test(customerDetails.pincode)) {
+    newErrors.pincode = "Please enter a valid 6-digit pincode";
+  }
+
+  setFormErrors(newErrors);
+  
+  if (Object.keys(newErrors).length > 0) {
+    // Scroll to top to show errors
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return false;
+  }
+  
+  return true;
+};
+
+// Update handleInputChange to clear errors when user starts typing:
+
+
 
   // Steps data
   const steps: { id: CheckoutStep; title: string; description: string }[] = [
@@ -162,12 +209,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setCustomerDetails((prev) => ({ ...prev, [name]: value }));
-  };
+ 
 
   const subtotal = calculateSubtotal(cartItems);
   const totals = calculateTotals(
@@ -197,14 +239,10 @@ export default function CheckoutPage() {
   const validateCurrentStep = () => {
     switch (currentStep) {
       case "details":
-        const requiredFields = ["name", "email", "contact1", "address", "district", "state", "pincode"];
-        const isValid = requiredFields.every(field => 
-          customerDetails[field as keyof typeof customerDetails]?.trim()
-        );
-        if (!isValid) {
-          alert("Please fill in all customer details");
-          return false;
-        }
+        return validateCustomerDetails();
+      
+      case "promo":
+        // No validation needed for promo step (optional)
         return true;
       
       case "payment":
@@ -215,11 +253,32 @@ export default function CheckoutPage() {
     }
   };
 
+
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setCustomerDetails((prev) => ({ ...prev, [name]: value }));
+    
+    // Clear error for this field when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+  
+  // Update handleNextStep to clear all errors first:
   const handleNextStep = () => {
     if (validateCurrentStep()) {
+      setFormErrors({}); // Clear all errors before proceeding
       goToNextStep();
     }
   };
+  
 
   const onCheckout = async (transactionId?: string) => {
     if (!validateForm(customerDetails, cartItems)) return;
@@ -309,6 +368,7 @@ export default function CheckoutPage() {
 
   const renderStepContent = () => {
     switch (currentStep) {
+      // Update the "details" step render to pass errors prop:
       case "details":
         return (
           <Card>
@@ -322,6 +382,7 @@ export default function CheckoutPage() {
               <CustomerDetailsForm
                 customerDetails={customerDetails}
                 handleInputChange={handleInputChange}
+                errors={formErrors}
               />
               <div className="flex justify-end mt-6">
                 <Button onClick={handleNextStep} className="gap-2">
@@ -332,7 +393,7 @@ export default function CheckoutPage() {
             </CardContent>
           </Card>
         );
-
+      
       case "promo":
         return (
           <Card>
@@ -356,7 +417,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between mt-6">
                 <Button variant="outline" onClick={goToPreviousStep} className="gap-2">
                   <ChevronLeft size={16} />
-                  Back to Details
+                  Back
                 </Button>
                 <Button onClick={handleNextStep} className="gap-2">
                   Continue to Payment
@@ -386,7 +447,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between mt-6">
                 <Button variant="outline" onClick={goToPreviousStep} className="gap-2">
                   <ChevronLeft size={16} />
-                  Back to Promo
+                  Back 
                 </Button>
                 <Button onClick={handleNextStep} className="gap-2">
                   Review Order
@@ -471,7 +532,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between mt-6">
                 <Button variant="outline" onClick={goToPreviousStep} className="gap-2">
                   <ChevronLeft size={16} />
-                  Back to Payment
+                  Back
                 </Button>
                 <Button onClick={handleNextStep} className="gap-2 bg-green-600 hover:bg-green-700">
                   Proceed to Payment

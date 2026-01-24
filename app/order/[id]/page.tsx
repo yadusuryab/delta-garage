@@ -46,15 +46,14 @@ interface Order {
 
 // Generate a WhatsApp message for the order
 const generateWhatsAppMessage = (order: Order) => {
+  console.log(order.productDetails)
   const orderDetails = order.productDetails
-    .map((item, index) => `
-      ${index + 1}. *${item.productId.productName}* - ₹${item.price}
-      Brand: ${item.productId.shoeBrand}
-      Quantity: ${item.quantity}
-      Size: ${item.size || "N/A"}
+    .map((item:any, index) => `
+      ${index + 1}. *${item.productId.name}* - ₹${item.price}
+      ${process.env.NEXT_PUBLIC_BASE_URL}/p/${item.productId._id}
     `)
     .join("\n");
-
+console.log(orderDetails)
   const message = `
     *Order Details* 🛍️
     ${orderDetails}
@@ -62,11 +61,10 @@ const generateWhatsAppMessage = (order: Order) => {
     *Order ID:* ${order._id}
     *Customer Name:* ${order.name}
     *Payment Method:* ${order.payment_method}
-    *Status:* ${order.status}
     *My order page:* ${process.env.NEXT_PUBLIC_BASE_URL}/order/${order._id} 
     I need assistance with this order. Please help!
   `;
-
+  console.log(message)
   return encodeURIComponent(message); // Encode the message for URL
 };
 
@@ -165,21 +163,7 @@ export default async function OrderDetailsPage({ params }: any) {
                 <div className="mt-4">
                   <h4 className="font-medium">Tracking Information</h4>
                   <p className="text-muted-foreground">No tracking ID available yet.</p>
-                  <form className="mt-2 space-y-2">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Enter DTDC Tracking ID"
-                        className="flex-1 px-3 py-2 border rounded-md text-sm"
-                      />
-                      <Button type="submit" variant="outline">
-                        Update Tracking
-                      </Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      If you have received a tracking ID from us, you can enter it here.
-                    </p>
-                  </form>
+               
                 </div>
               )}
             </div>

@@ -81,21 +81,21 @@ export const PaymentMethod = ({
             <SelectItem value="online">
               <div className="flex items-center justify-between w-full">
                 <span>Online Payment</span>
-                {!isFreeShipping && (
+                {/* {!isFreeShipping && (
                   <Badge variant="outline" className="text-xs">
                     ₹{paymentMethod === 'online' ? 80 : 100}
                   </Badge>
-                )}
+                )} */}
               </div>
             </SelectItem>
             <SelectItem value="cod">
               <div className="flex items-center justify-between w-full">
                 <span>Cash on Delivery</span>
-                {!isFreeShipping && (
+                {/* {!isFreeShipping && (
                   <Badge variant="outline" className="text-xs">
                     ₹{paymentMethod === 'cod' ? 100 : 80}
                   </Badge>
-                )}
+                )} */}
               </div>
             </SelectItem>
           </SelectContent>
