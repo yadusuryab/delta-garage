@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -19,86 +19,92 @@ function ProductList() {
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search");
   const categorySlug = searchParams.get("category");
+
+  // Initialize data and handle filtering in one effect
   useEffect(() => {
-    // Scroll to the top when the component mounts
-    window.scrollTo(0, 0);
-  }, []);
-  // Fetch all shoes initially
-  useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchAndFilterData = async () => {
       try {
-        const shoesData: any = await getAllProducts();
-        setShoes(shoesData);
-        setFilteredShoes(shoesData);
+        setLoading(true);
+        
+        // Fetch data only if not already fetched
+        if (shoes.length === 0) {
+          const shoesData: any = await getAllProducts();
+          setShoes(shoesData);
+        }
+
+        // Apply filters
+        if (searchTerm) {
+          const searchResults: any = await searchProducts(searchTerm);
+          setFilteredShoes(searchResults);
+        } else if (categorySlug) {
+          const categoryResults: any = await getProductsByCategory(categorySlug);
+          setFilteredShoes(categoryResults || []);
+        } else {
+          setFilteredShoes(shoes);
+        }
       } catch (err) {
-        setError("Failed to fetch data.");
-        console.error(err);
+        console.error("Error:", err);
+        setError("Failed to fetch data. Please refresh the page.");
+        toast.error("Failed to fetch data. Please refresh the page.");
       } finally {
         setLoading(false);
+        setSearchLoading(false);
       }
     };
 
-    fetchInitialData();
-  }, []);
- 
+    fetchAndFilterData();
+  }, [searchTerm, categorySlug]); // Remove shoes from dependencies
 
-  // Handle search and category updates
   useEffect(() => {
-    if (searchTerm) {
-      handleSearch(searchTerm);
-    } else if (categorySlug) {
-      handleCategoryFilter(categorySlug);
-    } else {
-      setFilteredShoes(shoes);
-    }
-  }, [searchTerm, categorySlug, shoes]);
-
-  // Function to search products
-  const handleSearch = async (keyword: string) => {
-    setSearchLoading(true);
-    try {
-      const searchResults: any = await searchProducts(keyword);
-      setFilteredShoes(searchResults);
-    } catch (err) {
-      console.error("Error searching products:", err);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-
-  // Function to filter products by category
-  const handleCategoryFilter = async (categorySlug: string) => {
-    setSearchLoading(true);
-    try {
-      const categoryResults: any = await getProductsByCategory(categorySlug);
-      setFilteredShoes(categoryResults || []);
-    } catch (err) {
-      console.error("Error filtering products by category:", err);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
+    window.scrollTo(0, 0);
+  }, []);
 
   if (loading) return <Loading />;
-  if (error) return toast("Please refresh the page.");
+  
+  if (error) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-red-500">{error}</p>
+        <Button 
+          onClick={() => window.location.reload()} 
+          className="mt-4"
+        >
+          Refresh Page
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="md:mx-28 mx-4">
-{searchTerm && <h2 className="mt-5 font-bold">Search results for {searchTerm}.</h2>}
-        {searchLoading && <Loading />} {/* Show loader when searching or filtering */}
+        {searchTerm && (
+          <h2 className="mt-5 font-bold">
+            Search results for "{searchTerm}"
+          </h2>
+        )}
+        
+        {categorySlug && !searchTerm && (
+          <h2 className="mt-5 font-bold">
+            Category: {categorySlug}
+          </h2>
+        )}
+
+        {searchLoading && <Loading />}
 
         {!searchLoading && filteredShoes.length === 0 ? (
-          <div className="flex flex-col justify-center max-w-96 mx-auto space-y-4">
-            <p className="text-center text-lg text-muted-foreground font-bold mt-6">
+          <div className="flex flex-col justify-center max-w-96 mx-auto space-y-4 py-12">
+            <p className="text-center text-lg text-muted-foreground font-bold">
               Couldn't find what you're looking for? Contact us via WhatsApp.
             </p>
-            <Link href={`https://wa.me/${site.phone}?text=${encodeURIComponent("Hi")}`} target="_blank">
-              <div className="flex justify-center">
-                <Button className="mx-auto bg-green-500 text-white hover:bg-green-600">
-                  Chat via WhatsApp
-                </Button>
-              </div>
+            <Link 
+              href={`https://wa.me/${site.phone}?text=${encodeURIComponent("Hi")}`} 
+              target="_blank"
+              className="flex justify-center"
+            >
+              <Button className="bg-green-500 text-white hover:bg-green-600">
+                Chat via WhatsApp
+              </Button>
             </Link>
           </div>
         ) : (
