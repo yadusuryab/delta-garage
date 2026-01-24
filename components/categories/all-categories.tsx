@@ -53,7 +53,7 @@ export function AllCategoriesSection() {
           {categories.map((category) => (
             <Link
               key={category._id}
-              href={`/products?category=${category.slug?.current || category.slug}`}
+              href={`/products?category=${category?.slug?.current || category?.slug}`}
               className="group"
             >
               <div className="flex flex-col items-center p-4 border rounded-lg hover:border-primary hover:shadow-sm transition-all">

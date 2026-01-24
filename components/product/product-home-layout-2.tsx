@@ -145,7 +145,7 @@ const ProductHomeGrid2 = () => {
                    {category.productCount}+ items
                   </p>
                   </div>
-                  <Link href={`/products?category=${category.slug}`}>
+                  <Link href={`/products?category=${category?.slug}`}>
                 <Button 
                   variant="outline" 
                   className="gap-2 group "
@@ -191,7 +191,7 @@ const ProductHomeGrid2 = () => {
             {/* Show More Products */}
             {category.productCount > 4 && (
               <div className="pt-6  text-center">
-                 <Link href={`/products?category=${category.slug}`}>
+                 <Link href={`/products?category=${category?.slug}`}>
                   <Button variant="ghost" size="sm" className="gap-2">
                     View all {category.productCount} products
                     <ChevronRight className="w-3 h-3" />

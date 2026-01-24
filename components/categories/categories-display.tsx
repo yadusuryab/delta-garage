@@ -221,7 +221,7 @@ export function CategoryDisplay() {
         >
           {categoryFeatures.map((feature, index) => (
             <Link
-              href={`/products?category=${feature.slug}`}
+              href={`/products?category=${feature?.slug}`}
               key={feature.id}
               prefetch={index < 3}
               className="snap-start shrink-0"
